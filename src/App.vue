@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <!-- <h1>Vue 仮実装テスト</h1>
-    <input v-model="name" placeholder="名前を入力" />
+    <h1>武神会</h1>
+    <!-- <input v-model="name" placeholder="名前を入力" />
     <p>こんにちは、{{ name }}さん！</p> -->    
     <button @click="currentPage = 'home'">ホーム</button>
     <button @click="currentPage = 'about'">別ページ</button>
