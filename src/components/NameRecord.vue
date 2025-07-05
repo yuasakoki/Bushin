@@ -29,22 +29,19 @@ const isLoading = ref(false)
 const error = ref('')
 
 const loadNames = async () => {
-  isLoading.value = true
-  error.value = ''
   try {
     const res = await axios.get('/api/names')
     names.value = res.data
+    error.value = '名前を入力してください'
   } catch (e) {
-    console.error('名前の読み込みエラー:', e)
-    error.value = '名前の読み込みに失敗しました'
-  } finally {
-    isLoading.value = false
+    alert('names.json 読み込みエラー:', e)
   }
 }
 
 const registerName = async () => {
   if (!name.value.trim()) {
     error.value = '名前を入力してください'
+    alert(error.value)
     return
   }
   
@@ -52,7 +49,6 @@ const registerName = async () => {
   error.value = ''
   try {
     const res = await axios.post('/api/names', { name: name.value.trim() })
-    // レスポンスの構造に応じて調整
     names.value = res.data.data || res.data
     name.value = ''
   } catch (e) {
@@ -61,10 +57,6 @@ const registerName = async () => {
   } finally {
     isLoading.value = false
   }
-}
-
-const clearError = () => {
-  error.value = ''
 }
 
 onMounted(() => {
