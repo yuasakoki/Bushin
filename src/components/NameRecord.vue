@@ -30,26 +30,27 @@ const error = ref('')
 
 const loadNames = async () => {
   try {
-    const res = await axios.get('/api/names')
-    names.value = res.data
-    error.value = '名前を入力してください'
+    const res = await axios.get('http://localhost:5000/api/names')
+    names.value = res.data.data
   } catch (e) {
-    alert('names.json 読み込みエラー:', e)
+    alert('名前一覧の読み込みに失敗しました')
   }
 }
 
 const registerName = async () => {
+  // 値のチェック
   if (!name.value.trim()) {
     error.value = '名前を入力してください'
     alert(error.value)
     return
   }
   
+  // 既存の名前と重複チェック
   isLoading.value = true
   error.value = ''
   try {
-    const res = await axios.post('/api/names', { name: name.value.trim() })
-    names.value = res.data.data || res.data
+    const res = await axios.post('http://localhost:5000/api/names', { name: name.value.trim() })
+    names.value.push(res.data.data)
     name.value = ''
   } catch (e) {
     console.error('名前の登録エラー:', e)
