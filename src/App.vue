@@ -1,17 +1,22 @@
 <template>
-  <div id="app">
-    <!-- <input v-model="name" placeholder="名前を入力" />
-    <p>こんにちは、{{ name }}さん！</p> -->    
-    <button @click="currentPage = 'home'">ホーム</button>
-    <button @click="currentPage = 'about'">別ページ</button>
-    <button @click="currentPage = 'nameRecord'">選手登録</button>
-
-    <component :is="currentPageComponent" />
+    <div id="app">
+    <header class="header">
+      <div class="nav-buttons">
+        <button @click="currentPage = 'home'">ホーム</button>
+        <button @click="currentPage = 'about'">別ページ</button>
+        <button @click="currentPage = 'setting'">管理者</button>
+      </div>
+    </header>
+    <component
+      :is="currentPageComponent"
+      :onChangePage="changePage"
+    />
   </div>
 </template>
 <script setup>
 import Home from './components/Home.vue'
 import About from './components/About.vue'
+import Setting from './components/Setting.vue'
 import NameRecord from './components/NameRecord.vue'
 import { ref, computed } from 'vue'
 
@@ -22,14 +27,16 @@ const currentPageComponent = computed(() => {
       return Home
     case 'about':
       return About
+    case 'setting':
+      return Setting
     case 'nameRecord':
       return NameRecord
-    default:
-      return Home // 万が一のときのフォールバック
   }
 })
 
-// const show = ref(true)
+function changePage(page) {
+  currentPage.value = page
+}
 </script>
 <style>
 #app {
