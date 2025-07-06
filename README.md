@@ -1,5 +1,11 @@
-# Vue 3 + Vite
+残タスク<br/>
+選手登録画面の入力チェック<br/>
+Jsonをクラウド化<br/>
+各トーナメント表を作成<br/>
+審判員の登録画面<br/>
+レイアウト調整<br/>
+順位が決定して登録後、Lineで順位を通知<br/>
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+
+選手登録画面で選手登録する際、生年月日で登録して翌年に修正しないでいいようにする
