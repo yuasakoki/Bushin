@@ -7,5 +7,10 @@ export default defineConfig({
   build: {
     outDir: 'src/python/static', // Flaskのstaticフォルダに出力
     emptyOutDir: true,
+  },
+  server: {
+    proxy: {
+      '/api': 'http://localhost:5000'
+    }
   }
 })

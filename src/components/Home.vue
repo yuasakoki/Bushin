@@ -7,7 +7,7 @@
     </header>
     <body>
       <div class="home-button-list">
-        <button @click="onChangePage('about')">一般女子</button>
+        <button @click="onChangePage('womensOpen')">一般女子</button>
         <button @click="onChangePage('about')">男子：上級</button>
         <button @click="onChangePage('about')">男子：中級</button>
         <button @click="onChangePage('about')">男子：初級</button>

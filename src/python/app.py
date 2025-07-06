@@ -1,20 +1,20 @@
 import os
-import json
 import threading
 from flask import Flask, request, jsonify, render_template
 from datetime import datetime
 from flask_cors import CORS
+import traceback
+from storage_manager import download_json_from_gcs, upload_json_to_gcs
+from utils import validate_name
 
 #修正した際は以下のコマンドを実行する
 #npm run build
 # PS C:\work\Bushin> cp -r -Force  dist/assets/ src/python/static/   
 # PS C:\work\Bushin> cp -Force  dist/index.html src/python/templates/
 # PS C:\work\Bushin> cp -Force src/python/static/index.html src/python/templates/index.html
-# PS C:\work\Bushin> python src/python/app.py                        
-import os
+# PS C:\work\Bushin> python src/python/app.py      
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
 app = Flask(
     __name__,
     static_folder=os.path.join(BASE_DIR, "static"),
@@ -23,51 +23,26 @@ app = Flask(
 )
 
 CORS(app)
+file_lock = threading.Lock()
 
-# 定数定義
-DATA_DIR = 'data'
-DATA_FILE = os.path.join(DATA_DIR, 'names.json')
+def load_data():
+    try:
+        return download_json_from_gcs()
+    except Exception as e:
+        print(f"Error loading data from GCS: {e}")
+        return []
+
+def save_data(data):
+    try:
+        upload_json_to_gcs(data)
+        return True
+    except Exception as e:
+        print(f"Error saving data to GCS: {e}")
+        return False
 
 @app.route('/')
 def index():
     return render_template("index.html")
-
-# スレッドセーフティのためのロック
-file_lock = threading.Lock()
-
-def ensure_data_directory():
-    """データディレクトリが存在することを確認"""
-    if not os.path.exists(DATA_DIR):
-        os.makedirs(DATA_DIR)
-
-def load_data():
-    """データファイルを読み込む"""
-    if not os.path.exists(DATA_FILE):
-        return []
-    
-    try:
-        with open(DATA_FILE, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    except (json.JSONDecodeError, IOError) as e:
-        return []
-
-def save_data(data):
-    """データファイルに保存する"""
-    try:
-        with open(DATA_FILE, 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
-        return True
-    except IOError as e:
-        return False
-
-# 名前のバリデーション
-def validate_name(name):
-    if not isinstance(name, str):
-        return False, "名前は文字列である必要があります"  
-    if len(name) > 10:
-        return False, "名前は10文字以内にしてください"
-    
-    return True, name
 
 # 名前登録API
 @app.route('/api/names', methods=['POST'])
@@ -86,11 +61,9 @@ def add_name():
         is_valid, result = validate_name(name)
         if not is_valid:
             return jsonify({'error': result}), 400
-        
         name = result
         
         with file_lock:
-            ensure_data_directory()
             data = load_data()
             
              # 同一人物の重複チェック（複数項目で一致するか確認）
@@ -129,13 +102,11 @@ def get_names():
     try:
         with file_lock:
             data = load_data()
-
         return jsonify({
             'message': '名前一覧を取得しました',
             'data': data,
             'count': len(data)
         }), 200
-        
     except Exception as e:
         return jsonify({'error': '内部サーバーエラーが発生しました'}), 500
 

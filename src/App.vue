@@ -3,7 +3,6 @@
     <header class="header">
       <div class="nav-buttons">
         <button @click="currentPage = 'home'">ホーム</button>
-        <button @click="currentPage = 'about'">別ページ</button>
         <button @click="currentPage = 'setting'">管理者</button>
       </div>
     </header>
@@ -15,7 +14,7 @@
 </template>
 <script setup>
 import Home from './components/Home.vue'
-import About from './components/About.vue'
+import WomensOpen from './components/WomensOpen.vue'
 import Setting from './components/Setting.vue'
 import NameRecord from './components/NameRecord.vue'
 import { ref, computed } from 'vue'
@@ -25,8 +24,8 @@ const currentPageComponent = computed(() => {
   switch (currentPage.value) {
     case 'home':
       return Home
-    case 'about':
-      return About
+    case 'womensOpen':
+      return WomensOpen
     case 'setting':
       return Setting
     case 'nameRecord':

@@ -68,7 +68,7 @@ const error = ref('')
 
 const loadNames = async () => {
   try {
-    const res = await axios.get('http://localhost:5000/api/names')
+    const res = await axios.get('/api/names')
     names.value = res.data.data
   } catch (e) {
     alert('名前一覧の読み込みに失敗しました')
@@ -87,7 +87,7 @@ const registerName = async () => {
   isLoading.value = true
   error.value = ''
   try {
-    const res = await axios.post('http://localhost:5000/api/names', { 
+    const res = await axios.post('/api/names', { 
       name: name.value.trim() 
       , grade: grade.value.trim()
       , age: age.value.trim()
