@@ -1,17 +1,33 @@
 import os
 import json
 import threading
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from datetime import datetime
 from flask_cors import CORS
-import traceback
 
-app = Flask(__name__)
+#修正した際は以下のコマンドを実行する
+#npm run build
+# PS C:\work\Bushin> cp -r -Force  dist/assets/ src/python/static/   
+# PS C:\work\Bushin> cp -Force  dist/index.html src/python/templates/
+# PS C:\work\Bushin> cp -Force src/python/static/index.html src/python/templates/index.html
+# PS C:\work\Bushin> python src/python/app.py                        
+
+app = Flask(
+    __name__,
+    static_folder=r"C:\work\Bushin\src\python\static",
+    static_url_path='/static',
+    template_folder=r"C:\work\Bushin\src\python\templates"
+)
+
 CORS(app)
 
 # 定数定義
 DATA_DIR = 'data'
 DATA_FILE = os.path.join(DATA_DIR, 'names.json')
+
+@app.route('/')
+def index():
+    return render_template("index.html")
 
 # スレッドセーフティのためのロック
 file_lock = threading.Lock()
