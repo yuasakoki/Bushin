@@ -6,6 +6,8 @@ from flask_cors import CORS
 import traceback
 from storage_manager import download_json_from_gcs, upload_json_to_gcs
 from utils import validate_name
+from .storage_manager import download_json_from_gcs, upload_json_to_gcs
+
 
 #修正した際は以下のコマンドを実行する
 #npm run build
