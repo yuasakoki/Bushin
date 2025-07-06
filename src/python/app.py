@@ -4,7 +4,7 @@ import threading
 from flask import Flask, request, jsonify
 from datetime import datetime
 from flask_cors import CORS
-import traceback  # 上部で追加
+import traceback
 
 app = Flask(__name__)
 CORS(app)
@@ -41,20 +41,12 @@ def save_data(data):
     except IOError as e:
         return False
 
+# 名前のバリデーション
 def validate_name(name):
-    """名前のバリデーション"""
-    if not name:
-        return False, "名前は必須です"
-    
     if not isinstance(name, str):
-        return False, "名前は文字列である必要があります"
-    
-    name = name.strip()
-    if not name:
-        return False, "名前は空白のみにはできません"
-    
-    if len(name) > 100:
-        return False, "名前は100文字以内にしてください"
+        return False, "名前は文字列である必要があります"  
+    if len(name) > 10:
+        return False, "名前は10文字以内にしてください"
     
     return True, name
 
@@ -62,10 +54,15 @@ def validate_name(name):
 @app.route('/api/names', methods=['POST'])
 def add_name():
     try:
+        # todo:生年月日を取得して年齢を計算する
         if not request.is_json:
             return jsonify({'error': 'リクエストボディはJSON形式である必要があります'}), 400
         
         name = request.json.get('name')
+        grade = request.json.get('grade')
+        age = request.json.get('age')
+        sex = request.json.get('sex')
+        affiliation = request.json.get('affiliation')
         
         is_valid, result = validate_name(name)
         if not is_valid:
@@ -77,12 +74,22 @@ def add_name():
             ensure_data_directory()
             data = load_data()
             
-            existing_names = [item['name'] for item in data]
-            if name in existing_names:
-                return jsonify({'error': '同じ名前が既に登録されています'}), 409
+             # 同一人物の重複チェック（複数項目で一致するか確認）
+            for item in data:
+                if (
+                    item['name'] == name and
+                    item.get('age') == age and
+                    item.get('sex') == sex and
+                    item.get('affiliation') == affiliation
+                ):
+                    return jsonify({'error': 'この選手はすでに登録されています'}), 409
             
             new_entry = {
                 'name': name,
+                'grade': grade,
+                'age': age,
+                'sex': sex,
+                'affiliation': affiliation,
                 'created_at': datetime.now().isoformat(),
                 'id': len(data) + 1
             }
