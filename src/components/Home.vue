@@ -1,5 +1,5 @@
 <template>
   <div>
-    <h2>これはホーム画面です</h2>
+    <h1>武神会</h1>
   </div>
 </template>
