@@ -11,12 +11,15 @@ from flask_cors import CORS
 # PS C:\work\Bushin> cp -Force  dist/index.html src/python/templates/
 # PS C:\work\Bushin> cp -Force src/python/static/index.html src/python/templates/index.html
 # PS C:\work\Bushin> python src/python/app.py                        
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 app = Flask(
     __name__,
-    static_folder=r"C:\work\Bushin\src\python\static",
+    static_folder=os.path.join(BASE_DIR, "static"),
     static_url_path='/static',
-    template_folder=r"C:\work\Bushin\src\python\templates"
+    template_folder=os.path.join(BASE_DIR, "templates")
 )
 
 CORS(app)
