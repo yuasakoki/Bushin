@@ -1,10 +1,20 @@
+## app.py
 import os
 import threading
 from flask import Flask, request, jsonify, render_template
 from datetime import datetime
 from flask_cors import CORS
 from .utils import validate_name
-from .storage_manager import download_json_from_gcs, upload_json_to_gcs
+
+IS_RENDER = os.environ.get("RENDER") == "1"
+if IS_RENDER:
+    from .storage_manager import download_json_from_gcs, upload_json_to_gcs
+    data_loader = download_json_from_gcs
+    data_saver = upload_json_to_gcs
+else:
+    from .data_manager import load_data as local_load_data, save_data as local_save_data
+    data_loader = local_load_data
+    data_saver = local_save_data
 
 
 #修正した際は以下のコマンドを実行する
@@ -27,19 +37,19 @@ file_lock = threading.Lock()
 
 def load_data():
     try:
-        return download_json_from_gcs()
+        return data_loader()
     except Exception as e:
-        print(f"Error loading data from GCS: {e}")
+        print(f"Error loading data: {e}")
         return []
 
 def save_data(data):
     try:
-        upload_json_to_gcs(data)
+        data_saver(data)
         return True
     except Exception as e:
-        print(f"Error saving data to GCS: {e}")
+        print(f"Error saving data: {e}")
         return False
-
+    
 @app.route('/')
 def index():
     return render_template("index.html")

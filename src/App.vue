@@ -17,6 +17,7 @@ import Home from './components/Home.vue'
 import WomensOpen from './components/WomensOpen.vue'
 import Setting from './components/Setting.vue'
 import NameRecord from './components/NameRecord.vue'
+import RefereeRegistration from './components/RefereeRegistration.vue'
 import { ref, computed } from 'vue'
 
 const currentPage = ref('home')
@@ -30,6 +31,8 @@ const currentPageComponent = computed(() => {
       return Setting
     case 'nameRecord':
       return NameRecord
+      case 'RefereeRegistration':
+      return RefereeRegistration
   }
 })
 

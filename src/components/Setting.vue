@@ -4,6 +4,7 @@
     </header>
   <div id="settings">
     <button @click="onChangePage('nameRecord')">選手登録</button>
+    <button @click="onChangePage('RefereeRegistration')">審判員登録</button>
   </div>
 </template>
 <script setup>
