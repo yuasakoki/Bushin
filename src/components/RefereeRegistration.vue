@@ -45,7 +45,8 @@ const error = ref('')
 
 const loadNames = async () => {
   try {
-    const res = await axios.get('/api/names')
+    const res = await axios.get('/api/Referee')
+    console.log(res.data) // ← ここでレスポンスを確認
     names.value = res.data.data
   } catch (e) {
     alert('名前一覧の読み込みに失敗しました')
@@ -63,19 +64,11 @@ const registerName = async () => {
   // 既存の名前と重複チェック
   isLoading.value = true
   try {
-    const res = await axios.post('/api/names', { 
+    const res = await axios.post('/api/Referee', { 
       name: name.value.trim() 
-      , grade: grade.value.trim()
-      , age: age.value.trim()
-      , sex: sex.value.trim()
-      , affiliation: affiliation.value.trim()
     })  
     names.value.push(res.data.data)  
     name.value = ''
-    grade.value = ''
-    age.value =''
-    sex.value = ''
-    affiliation.value = ''
   } catch (e) {
     console.error('名前の登録エラー:', e)
     error.value = '名前の登録に失敗しました'
@@ -89,19 +82,6 @@ const chekcvalue = () =>{
     error.value = '名前を入力してください'
     return false
   }
-  if (!grade.value.trim()) {
-    error.value = '階級を選択してください'
-    return false
-  }
-  if (!age.value) {
-    error.value = '年齢を選択してください'
-    return false
-  }
-  if(!affiliation.value.trim()) {
-    error.value = '道場名を入力してください'
-    return false
-  }
-  return true
 }
 
 onMounted(() => {

@@ -5,6 +5,7 @@ from flask import Flask, request, jsonify, render_template
 from datetime import datetime
 from flask_cors import CORS
 from .utils import validate_name
+from .data_manager import player_load_data, player_save_data, referee_load_data, referee_save_data
 
 IS_RENDER = os.environ.get("RENDER") == "1"
 if IS_RENDER:
@@ -12,17 +13,8 @@ if IS_RENDER:
     data_loader = download_json_from_gcs
     data_saver = upload_json_to_gcs
 else:
-    from .data_manager import load_data as local_load_data, save_data as local_save_data
-    data_loader = local_load_data
-    data_saver = local_save_data
-
-
-#修正した際は以下のコマンドを実行する
-#npm run build
-# PS C:\work\Bushin> cp -r -Force  dist/assets/ src/python/static/   
-# PS C:\work\Bushin> cp -Force  dist/index.html src/python/templates/
-# PS C:\work\Bushin> cp -Force src/python/static/index.html src/python/templates/index.html
-# PS C:\work\Bushin> python src/python/app.py      
+    data_loader = player_load_data
+    data_saver = player_save_data
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 app = Flask(
@@ -49,34 +41,33 @@ def save_data(data):
     except Exception as e:
         print(f"Error saving data: {e}")
         return False
-    
+
 @app.route('/')
 def index():
     return render_template("index.html")
 
-# 名前登録API
+# 選手名前登録API
 @app.route('/api/names', methods=['POST'])
 def add_name():
     try:
-        # todo:生年月日を取得して年齢を計算する
         if not request.is_json:
             return jsonify({'error': 'リクエストボディはJSON形式である必要があります'}), 400
-        
+
         name = request.json.get('name')
         grade = request.json.get('grade')
         age = request.json.get('age')
         sex = request.json.get('sex')
         affiliation = request.json.get('affiliation')
-        
+
         is_valid, result = validate_name(name)
         if not is_valid:
             return jsonify({'error': result}), 400
         name = result
-        
+
         with file_lock:
-            data = load_data()
-            
-             # 同一人物の重複チェック（複数項目で一致するか確認）
+            data = player_load_data()
+
+            # 同一人物の重複チェック（複数項目で一致するか確認）
             for item in data:
                 if (
                     item['name'] == name and
@@ -86,7 +77,7 @@ def add_name():
                     item.get('affiliation') == affiliation
                 ):
                     return jsonify({'error': 'この選手はすでに登録されています'}), 409
-            
+
             new_entry = {
                 'name': name,
                 'grade': grade,
@@ -97,22 +88,70 @@ def add_name():
                 'id': len(data) + 1
             }
             data.append(new_entry)
-            
-            if not save_data(data):
-                return jsonify({'error': 'データの保存に失敗しました'}), 500
+
+            player_save_data(data)
 
         return jsonify({'message': '名前が正常に追加されました', 'data': new_entry}), 201
 
     except Exception as e:
         return jsonify({'error': '内部サーバーエラーが発生しました'}), 500
 
-
-# 名前一覧取得API（追加）
+# 選手名前一覧取得API
 @app.route('/api/names', methods=['GET'])
 def get_names():
     try:
         with file_lock:
-            data = load_data()
+            data = player_load_data()
+        return jsonify({
+            'message': '名前一覧を取得しました',
+            'data': data,
+            'count': len(data)
+        }), 200
+    except Exception as e:
+        return jsonify({'error': '内部サーバーエラーが発生しました'}), 500
+
+# 審判員名前登録API
+@app.route('/api/Referee', methods=['POST'])
+def add_referee_name():
+    try:
+        if not request.is_json:
+            return jsonify({'error': 'リクエストボディはJSON形式である必要があります'}), 400
+
+        name = request.json.get('name')
+
+        is_valid, result = validate_name(name)
+        if not is_valid:
+            return jsonify({'error': result}), 400
+        name = result
+
+        with file_lock:
+            data = referee_load_data()
+
+            # 同一人物の重複チェック（名前のみ）
+            for item in data:
+                if item['name'] == name:
+                    return jsonify({'error': 'この審判員はすでに登録されています'}), 409
+
+            new_entry = {
+                'name': name,
+                'created_at': datetime.now().isoformat(),
+                'id': len(data) + 1
+            }
+            data.append(new_entry)
+
+            referee_save_data(data)
+
+        return jsonify({'message': '名前が正常に追加されました', 'data': new_entry}), 201
+
+    except Exception as e:
+        return jsonify({'error': '内部サーバーエラーが発生しました'}), 500
+
+# 審判員名前一覧取得API
+@app.route('/api/Referee', methods=['GET'])
+def get_referee_names():
+    try:
+        with file_lock:
+            data = referee_load_data()
         return jsonify({
             'message': '名前一覧を取得しました',
             'data': data,
