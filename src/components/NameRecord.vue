@@ -184,5 +184,6 @@ const chekcvalue = () =>{
 
 onMounted(() => {
   loadNames()
+  setInterval(loadNames, 3000); // 10秒ごとに取得
 })
 </script>
