@@ -1,10 +1,6 @@
 <template>
-    <header>
-      <p>ホーム</p> 
-      <p>こんにちは、ユーザーさん！</p> 
       <h1>武神会</h1>
       <h1>全日本空手形大会</h1> 
-    </header>
     <body>
       <div class="home-button-list">
         <button @click="onChangePage('womensOpen')">一般女子</button>

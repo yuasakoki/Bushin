@@ -1,9 +1,8 @@
 <template>
-    <header>
-        <p>管理者メニュー</p> 
-    </header>
+  <h1>管理者メニュー</h1> 
   <div id="settings">
-    <button @click="onChangePage('nameRecord')">選手登録</button>
+    <button @click="onChangePage('RefereeRegistration')">審判員</button><br>
+    <button @click="onChangePage('nameRecord')">選手登録</button><br>
     <button @click="onChangePage('RefereeRegistration')">審判員登録</button>
   </div>
 </template>
