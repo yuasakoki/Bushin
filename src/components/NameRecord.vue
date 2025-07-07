@@ -83,7 +83,7 @@ import axios from 'axios'
 const name = ref('')
 const grade = ref('')
 const age = ref('')
-const sex = ref('')
+const sex = ref('男') // デフォルトは男性
 const affiliation = ref('')
 const names = ref([])
 const isLoading = ref(false)
@@ -108,7 +108,6 @@ const registerName = async () => {
   
   // 既存の名前と重複チェック
   isLoading.value = true
-  error.value = ''
   try {
     const res = await axios.post('/api/names', { 
       name: name.value.trim() 
@@ -148,6 +147,7 @@ const chekcvalue = () =>{
     error.value = '道場名を入力してください'
     return false
   }
+  return true
 }
 
 onMounted(() => {
