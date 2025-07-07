@@ -70,6 +70,7 @@ def add_name():
             for item in data:
                 if (
                     item['name'] == name and
+                    item.get('grade') == grade and
                     item.get('age') == age and
                     item.get('sex') == sex and
                     item.get('affiliation') == affiliation
