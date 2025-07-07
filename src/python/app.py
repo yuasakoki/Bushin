@@ -14,10 +14,14 @@ from .data_manager import (
 
 IS_RENDER = os.environ.get("RENDER") == "1"
 if IS_RENDER:
-    from .storage_manager import download_json_from_gcs, upload_json_to_gcs
-
-    data_loader = download_json_from_gcs
-    data_saver = upload_json_to_gcs
+    from .storage_manager import (
+        download_player_json_from_gcs, upload_player_json_to_gcs,
+        download_referee_json_from_gcs, upload_referee_json_to_gcs
+    )
+    player_load_data = download_player_json_from_gcs
+    player_save_data = upload_player_json_to_gcs
+    referee_load_data = download_referee_json_from_gcs
+    referee_save_data = upload_referee_json_to_gcs
 else:
     data_loader = player_load_data
     data_saver = player_save_data
@@ -92,24 +96,18 @@ def add_name():
                     return jsonify({"error": "この選手はすでに登録されています"}), 409
 
             new_entry = {
+                "id": len(data) + 1,
                 "name": name,
                 "grade": grade,
                 "age": age,
                 "sex": sex,
                 "affiliation": affiliation,
                 "created_at": datetime.now().isoformat(),
-                "id": len(data) + 1,
                 "scores": {
                     "round1": {"審査員A": 0, "審査員B": 0, "審査員C": 0},
                     "round2": {"審査員D": 0, "審査員E": 0, "審査員F": 0},
-                    "round3": {
-                        "審査員G": 0,
-                        "審査員H": 0,
-                        "審査員I": 0,
-                        "審査員J": 0,
-                        "審査員K": 0,
-                    },
-                },
+                    "round3": {"審査員G": 0, "審査員H": 0, "審査員I": 0, "審査員J": 0, "審査員K": 0,}
+                }
             }
             data.append(new_entry)
 
