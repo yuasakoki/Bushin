@@ -1,15 +1,15 @@
 <template>
-  <div style="max-width: 600px; margin: 0 auto;">
+  <div class="container">
     <h1>選手登録</h1>
 
     <!-- 名前 -->
-    <div>
+    <div class="form-group">
       <label>名前</label><br />
       <input v-model="name" placeholder="名前を入力" />
     </div>
 
     <!-- 階級 -->
-    <div>
+    <div class="form-group">
       <label>階級</label><br />
       <select v-model="grade">
         <option disabled value="">階級を選択</option>
@@ -21,23 +21,23 @@
     </div>
 
     <!-- 年齢 -->
-    <div>
+    <div class="form-group">
       <label>年齢</label><br />
       <select v-model="age">
         <option disabled value="">年齢を選択</option>
-        <option v-for="n in 51" :key="n">{{ n + 9 }}</option> <!-- 10〜60歳 -->
+        <option v-for="n in 51" :key="n">{{ n + 9 }}</option>
       </select>
     </div>
 
     <!-- 性別 -->
-    <div>
+    <div class="form-group">
       <label>性別</label><br />
       <label><input type="radio" v-model="sex" value="男" checked /> 男</label>
       <label><input type="radio" v-model="sex" value="女" /> 女</label>
     </div>
 
     <!-- 道場 -->
-    <div>
+    <div class="form-group">
       <label>道場</label><br />
       <input v-model="affiliation" list="dojos" placeholder="道場名を入力" />
       <datalist id="dojos">
@@ -49,29 +49,31 @@
     </div>
 
     <!-- ボタン -->
-    <div style="margin-top: 12px;">
+    <div class="form-group">
       <button @click="registerName">登録</button>
       <button @click="loadNames">読み取り</button>
     </div>
 
     <!-- テーブル -->
-    <table border="1" style="width: 100%; margin-top: 24px;">
-      <thead>
-        <tr>
-          <th>No.</th><th>名前</th><th>階級</th><th>年齢</th><th>性別</th><th>道場</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(item, index) in names" :key="index">
-          <td>{{ index + 1 }}</td>
-          <td>{{ item.name }}</td>
-          <td>{{ item.grade }}</td>
-          <td>{{ item.age }}</td>
-          <td>{{ item.sex }}</td>
-          <td>{{ item.affiliation }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>No.</th><th>名前</th><th>階級</th><th>年齢</th><th>性別</th><th>道場</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(item, index) in names" :key="index">
+            <td>{{ index + 1 }}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.grade }}</td>
+            <td>{{ item.age }}</td>
+            <td>{{ item.sex }}</td>
+            <td>{{ item.affiliation }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 
