@@ -5,26 +5,27 @@ from flask import Flask, request, jsonify, render_template
 from datetime import datetime
 from flask_cors import CORS
 from .utils import validate_name
-from .data_manager import (
-    player_load_data,
-    player_save_data,
-    referee_load_data,
-    referee_save_data,
-)
 
 IS_RENDER = os.environ.get("RENDER") == "1"
 if IS_RENDER:
     from .storage_manager import (
-        download_player_json_from_gcs, upload_player_json_to_gcs,
-        download_referee_json_from_gcs, upload_referee_json_to_gcs
+        download_player_json_from_gcs,
+        upload_player_json_to_gcs,
+        download_referee_json_from_gcs,
+        upload_referee_json_to_gcs,
     )
+
     player_load_data = download_player_json_from_gcs
     player_save_data = upload_player_json_to_gcs
     referee_load_data = download_referee_json_from_gcs
     referee_save_data = upload_referee_json_to_gcs
 else:
-    data_loader = player_load_data
-    data_saver = player_save_data
+    from .data_manager import (
+        player_load_data,
+        player_save_data,
+        referee_load_data,
+        referee_save_data,
+    )
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 app = Flask(
@@ -106,8 +107,14 @@ def add_name():
                 "scores": {
                     "round1": {"審査員A": 0, "審査員B": 0, "審査員C": 0},
                     "round2": {"審査員D": 0, "審査員E": 0, "審査員F": 0},
-                    "round3": {"審査員G": 0, "審査員H": 0, "審査員I": 0, "審査員J": 0, "審査員K": 0,}
-                }
+                    "round3": {
+                        "審査員G": 0,
+                        "審査員H": 0,
+                        "審査員I": 0,
+                        "審査員J": 0,
+                        "審査員K": 0,
+                    },
+                },
             }
             data.append(new_entry)
 
