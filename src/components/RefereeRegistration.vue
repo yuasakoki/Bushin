@@ -82,6 +82,7 @@ const chekcvalue = () =>{
     error.value = '名前を入力してください'
     return false
   }
+  return true
 }
 
 onMounted(() => {
