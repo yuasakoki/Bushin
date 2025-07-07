@@ -4,8 +4,8 @@ from flask import Flask, request, jsonify, render_template
 from datetime import datetime
 from flask_cors import CORS
 import traceback
-from .utils import validate_name
-from .storage_manager import download_json_from_gcs, upload_json_to_gcs
+from utils import validate_name
+from storage_manager import download_json_from_gcs, upload_json_to_gcs
 
 
 #修正した際は以下のコマンドを実行する
