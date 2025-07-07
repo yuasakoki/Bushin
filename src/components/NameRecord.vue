@@ -1,79 +1,109 @@
 <template>
-  <div class="container">
-    <h1>選手登録</h1>
+  <div class="min-h-screen flex flex-col items-center justify-center bg-white px-6 py-12 font-sawarabi min-w-[320px] text-red-700">
 
-    <!-- 名前 -->
-    <div class="form-group">
-      <label>名前</label><br />
-      <input v-model="name" placeholder="名前を入力" />
-    </div>
+    <h1 class="text-5xl font-bold mb-12 border-b-4 border-red-300 pb-3 animate-fadeInDown">
+      選手登録
+    </h1>
 
-    <!-- 階級 -->
-    <div class="form-group">
-      <label>階級</label><br />
-      <select v-model="grade">
-        <option disabled value="">階級を選択</option>
-        <option>初級</option>
-        <option>中級</option>
-        <option>上級</option>
-        <option>一般女子</option>
-      </select>
-    </div>
+    <div class="w-full max-w-md bg-white shadow-lg rounded-lg p-8 space-y-6 animate-slideUpSlow">
 
-    <!-- 年齢 -->
-    <div class="form-group">
-      <label>年齢</label><br />
-      <select v-model="age">
-        <option disabled value="">年齢を選択</option>
-        <option v-for="n in 51" :key="n">{{ n + 9 }}</option>
-      </select>
-    </div>
+      <!-- 名前 -->
+      <div>
+        <label class="block mb-2 font-semibold text-red-700">名前</label>
+        <input v-model="name" placeholder="名前を入力" 
+          class="w-full px-4 py-3 border border-red-400 rounded-md bg-red-700 text-white placeholder-red-300 focus:outline-none focus:ring-4 focus:ring-red-400 transition-all duration-300 hover:scale-105" />
+      </div>
 
-    <!-- 性別 -->
-    <div class="form-group">
-      <label>性別</label><br />
-      <label><input type="radio" v-model="sex" value="男" checked /> 男</label>
-      <label><input type="radio" v-model="sex" value="女" /> 女</label>
-    </div>
+      <!-- 階級 -->
+      <div>
+        <label class="block mb-2 font-semibold text-red-700">階級</label>
+        <select v-model="grade" 
+          class="w-full px-4 py-3 border border-red-400 rounded-md bg-red-700 text-white placeholder-red-300 focus:outline-none focus:ring-4 focus:ring-red-400 transition-all duration-300 hover:scale-105">
+          <option disabled value="" class="text-red-300">階級を選択</option>
+          <option class="text-black">初級</option>
+          <option class="text-black">中級</option>
+          <option class="text-black">上級</option>
+          <option class="text-black">一般女子</option>
+        </select>
+      </div>
 
-    <!-- 道場 -->
-    <div class="form-group">
-      <label>道場</label><br />
-      <input v-model="affiliation" list="dojos" placeholder="道場名を入力" />
-      <datalist id="dojos">
-        <option value="赤龍館" />
-        <option value="蒼空塾" />
-        <option value="玄武館" />
-        <option value="天翔会" />
-      </datalist>
-    </div>
+      <!-- 年齢 -->
+      <div>
+        <label class="block mb-2 font-semibold text-red-700">年齢</label>
+        <select v-model="age" 
+          class="w-full px-4 py-3 border border-red-400 rounded-md bg-red-700 text-white placeholder-red-300 focus:outline-none focus:ring-4 focus:ring-red-400 transition-all duration-300 hover:scale-105">
+          <option disabled value="" class="text-red-300">年齢を選択</option>
+          <option v-for="n in 51" :key="n" class="text-black">{{ n + 9 }}</option>
+        </select>
+      </div>
 
-    <!-- ボタン -->
-    <div class="form-group">
-      <button @click="registerName">登録</button>
-      <button @click="loadNames">読み取り</button>
+      <!-- 性別 -->
+      <div>
+        <label class="block mb-2 font-semibold text-red-700">性別</label>
+        <div class="flex gap-8">
+          <label class="flex items-center gap-3 cursor-pointer select-none text-red-700">
+            <input type="radio" v-model="sex" value="男" class="accent-red-600" />
+            <span class="text-lg">男</span>
+          </label>
+          <label class="flex items-center gap-3 cursor-pointer select-none text-red-700">
+            <input type="radio" v-model="sex" value="女" class="accent-red-600" />
+            <span class="text-lg">女</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- 道場 -->
+      <div>
+        <label class="block mb-2 font-semibold text-red-700">道場</label>
+        <input v-model="affiliation" list="dojos" placeholder="道場名を入力" 
+          class="w-full px-4 py-3 border border-red-400 rounded-md bg-red-700 text-white placeholder-red-300 focus:outline-none focus:ring-4 focus:ring-red-400 transition-all duration-300 hover:scale-105" />
+        <datalist id="dojos">
+          <option value="赤龍館" />
+          <option value="蒼空塾" />
+          <option value="玄武館" />
+          <option value="天翔会" />
+        </datalist>
+      </div>
+
+      <!-- ボタン -->
+      <div class="flex justify-between mt-8">
+        <button @click="registerName" 
+          class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg transform transition-transform duration-300 hover:scale-110 active:scale-95">
+          登録
+        </button>
+        <button @click="loadNames" 
+          class="bg-white border-2 border-red-600 text-red-600 font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-red-50 transform transition-transform duration-300 hover:scale-110 active:scale-95">
+          読み取り
+        </button>
+      </div>
     </div>
 
     <!-- テーブル -->
-    <div class="table-wrapper">
-      <table>
-        <thead>
+    <div class="w-full max-w-6xl mt-16 overflow-x-auto shadow-lg rounded-lg bg-white animate-fadeInUp">
+      <table class="min-w-full border-collapse table-auto">
+        <thead class="bg-red-100 border-b-2 border-red-300">
           <tr>
-            <th>No.</th><th>名前</th><th>階級</th><th>年齢</th><th>性別</th><th>道場</th>
+            <th class="py-4 px-6 text-left font-semibold text-red-700">No.</th>
+            <th class="py-4 px-6 text-left font-semibold text-red-700">名前</th>
+            <th class="py-4 px-6 text-left font-semibold text-red-700">階級</th>
+            <th class="py-4 px-6 text-left font-semibold text-red-700">年齢</th>
+            <th class="py-4 px-6 text-left font-semibold text-red-700">性別</th>
+            <th class="py-4 px-6 text-left font-semibold text-red-700">道場</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(item, index) in names" :key="index">
-            <td>{{ index + 1 }}</td>
-            <td>{{ item.name }}</td>
-            <td>{{ item.grade }}</td>
-            <td>{{ item.age }}</td>
-            <td>{{ item.sex }}</td>
-            <td>{{ item.affiliation }}</td>
+          <tr v-for="(item, index) in names" :key="index" class="border-b border-gray-200 hover:bg-red-50 transition-colors">
+            <td class="py-3 px-6 text-sm text-red-700">{{ index + 1 }}</td>
+            <td class="py-3 px-6 text-sm text-red-700">{{ item.name }}</td>
+            <td class="py-3 px-6 text-sm text-red-700">{{ item.grade }}</td>
+            <td class="py-3 px-6 text-sm text-red-700">{{ item.age }}</td>
+            <td class="py-3 px-6 text-sm text-red-700">{{ item.sex }}</td>
+            <td class="py-3 px-6 text-sm text-red-700">{{ item.affiliation }}</td>
           </tr>
         </tbody>
       </table>
     </div>
+
   </div>
 </template>
 

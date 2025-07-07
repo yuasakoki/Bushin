@@ -1,5 +1,5 @@
 {
-  "name": "Bushin",
+  "name": "bushin",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -8,15 +8,32 @@
     "build": "vite build",
     "preview": "vite preview",
     "vite": "vite",
-    "dev:all": "concurrently \"npm run vite\" \"python python ./src/python/app.py\"" 
+    "dev:all": "concurrently \"npm run vite\" \"python python ./src/python/app.py\""
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.1.11",
     "axios": "^1.10.0",
     "concurrently": "^9.2.0",
     "vue": "^3.5.17"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.0",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.13",
     "vite": "^7.0.0"
-  }
+  },
+  "description": "残タスク<br/>\r 登録した選手の削除<br/>\r 選手登録画面の入力チェック<br/>\r Jsonをクラウド化 done<br/>\r 各トーナメント表を作成<br/>\r 審判員の登録画面<br/>\r レイアウト調整<br/>\r 順位が決定して登録後、Lineで順位を通知<br/>",
+  "main": "vite.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yuasakoki/Bushin.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yuasakoki/Bushin/issues"
+  },
+  "homepage": "https://github.com/yuasakoki/Bushin#readme"
 }
