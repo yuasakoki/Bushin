@@ -14,10 +14,16 @@
 </template>
 <script setup>
 import Home from './components/Home.vue'
-import WomensOpen from './components/WomensOpen.vue'
-import Setting from './components/Setting.vue'
-import NameRecord from './components/NameRecord.vue'
-import RefereeRegistration from './components/RefereeRegistration.vue'
+import MenAdvanced from './components/result_page/MenAdvanced.vue'
+import MenIntermediate from './components/result_page/MenIntermediate.vue'
+import MenBeginner from './components/result_page/MenBeginner.vue'
+import WomenAdvanced from './components/result_page/WomenAdvanced.vue'
+import WomenIntermediate from './components/result_page/WomenIntermediate.vue'
+import WomenBeginner from './components/result_page/WomenBeginner.vue'
+import WomensOpen from './components/result_page/WomensOpen.vue'
+import Setting from './components/setting_page/Setting.vue'
+import PlayerRegistration from './components/setting_page/PlayerRegistration.vue'
+import RefereeRegistration from './components/setting_page/RefereeRegistration.vue'
 import { ref, computed } from 'vue'
 
 const currentPage = ref('home')
@@ -27,11 +33,23 @@ const currentPageComponent = computed(() => {
       return Home
     case 'womensOpen':
       return WomensOpen
+    case 'menAdvanced':
+      return MenAdvanced
+    case 'menIntermediate':
+      return MenIntermediate
+    case 'menBeginner':
+      return MenBeginner
+    case 'womenAdvanced':
+      return WomenAdvanced
+    case 'womenIntermediate':
+      return WomenIntermediate
+    case 'womenBeginner':
+      return WomenBeginner
     case 'setting':
       return Setting
-    case 'nameRecord':
-      return NameRecord
-      case 'RefereeRegistration':
+    case 'playerRegistration':
+      return PlayerRegistration
+    case 'refereeRegistration':
       return RefereeRegistration
   }
 })

@@ -156,6 +156,7 @@ def add_referee_name():
             )
 
         name = request.json.get("name")
+        gradeCourts = request.json.get("gradeCourts", [])
 
         is_valid, result = validate_name(name)
         if not is_valid:
