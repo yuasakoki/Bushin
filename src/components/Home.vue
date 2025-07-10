@@ -4,8 +4,8 @@
     <div class="hero-content">
       <h1 class="main-title">武神会</h1>
       <h1 class="sub-title">全日本空手形大会</h1>
-      <div class="divider"></div>
-      <div class="category-section">
+      <div class="ranking-section">
+        <h2 class="ranking-title">出場選手</h2>
         <div class="category">
           <h3>男子</h3>
           <div class="btn-group">
@@ -29,7 +29,6 @@
           </div>
         </div>
       </div>
-      <div class="divider"></div>
       <div class="ranking-section">
         <h2 class="ranking-title">順位</h2>
         <div class="category">
