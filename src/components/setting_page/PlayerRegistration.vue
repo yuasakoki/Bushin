@@ -6,14 +6,12 @@
     </h1>
 
     <div class="w-full max-w-md bg-white shadow-lg rounded-lg p-8 space-y-6 animate-slideUpSlow">
-
       <!-- 名前 -->
       <div>
-        <label class="block mb-2 font-semibold text-red-700">名前</label>
-        <input v-model="name" placeholder="名前を入力" 
-          class="w-full px-4 py-3 border border-red-400 rounded-md bg-red-700 text-white placeholder-red-300 focus:outline-none focus:ring-4 focus:ring-red-400 transition-all duration-300 hover:scale-105" />
+        <label for="name" class="block mb-2 font-semibold text-red-700">名前</label>
+        <input id="name" v-model="name" placeholder="名前を入力"
+        class="w-full px-4 py-3 border border-red-400 rounded-md bg-red-700 text-white placeholder-red-300 focus:outline-none focus:ring-4 focus:ring-red-400 transition-all duration-300 hover:scale-105" />
       </div>
-
       <!-- 階級 -->
       <div>
         <label class="block mb-2 font-semibold text-red-700">階級</label>
