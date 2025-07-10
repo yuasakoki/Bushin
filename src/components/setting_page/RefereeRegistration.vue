@@ -87,13 +87,7 @@ const registerName = async () => {
     alert('名前を入力してください')
     return
   }
-  // すべての階級・コートが選択されているかチェック
-//   for (const item of gradeCourtList.value) {
-//     if (!item.grade || !item.court) {
-//       alert('すべての階級とコートを選択してください')
-//       return
-//     }
-//   }
+  
   isLoading.value = true
   try {
     const res = await axios.post('/api/Referee', {

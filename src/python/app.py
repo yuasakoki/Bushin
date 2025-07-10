@@ -8,7 +8,7 @@ from .utils import validate_name
 
 IS_RENDER = os.environ.get("RENDER") == "1"
 if IS_RENDER:
-    from .storage_manager import (
+    from .json_manager import (
         download_player_json_from_gcs,
         upload_player_json_to_gcs,
         download_referee_json_from_gcs,
@@ -37,23 +37,6 @@ app = Flask(
 
 CORS(app)
 file_lock = threading.Lock()
-
-
-def load_data():
-    try:
-        return data_loader()
-    except Exception as e:
-        print(f"Error loading data: {e}")
-        return []
-
-
-def save_data(data):
-    try:
-        data_saver(data)
-        return True
-    except Exception as e:
-        print(f"Error saving data: {e}")
-        return False
 
 
 @app.route("/")
@@ -156,7 +139,6 @@ def add_referee_name():
             )
 
         name = request.json.get("name")
-        gradeCourts = request.json.get("gradeCourts", [])
 
         is_valid, result = validate_name(name)
         if not is_valid:

@@ -58,9 +58,3 @@ function changePage(page) {
   currentPage.value = page
 }
 </script>
-<style>
-#app {
-  font-family: 'Arial';
-  padding: 20px;
-}
-</style>
