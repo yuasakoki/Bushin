@@ -7,18 +7,52 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
+# Dependency directories
+node_modules/
+
+# Build output
+dist/
+dist-ssr/
+
+# Local env files
 *.local
+.env
+.env.*    # dotenvの複数環境ファイル用
 
 # Editor directories and files
-.vscode/*
+.vscode/
 !.vscode/extensions.json
-.idea
+
+.idea/
 .DS_Store
+
+# Visual Studio files
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
+
+# Swap files
 *.sw?
+
+# MacOS thumbnails
+._*
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# VSCode workspace storage (オプション)
+.vscode-test/
+
+# その他のよくある一時ファイル
+*.log
+*.tmp
+*.temp
+*.bak
+*.orig
+
+# Gitの設定ファイルを除外
+*.json  # ※注意！プロジェクトに必要なjsonは除外しないこと
+
