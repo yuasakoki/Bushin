@@ -39,6 +39,7 @@ dist-ssr/
 ._*
 
 # Python cache
+/src/python/__pycache__
 __pycache__/
 *.py[cod]
 *$py.class
@@ -56,3 +57,6 @@ __pycache__/
 # Gitの設定ファイルを除外
 *.json  # ※注意！プロジェクトに必要なjsonは除外しないこと
 
+src/python/data/names.json
+src/python/data/Referee.json
+*.pyc
