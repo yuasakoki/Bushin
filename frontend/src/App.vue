@@ -1,8 +1,11 @@
+<!-- App.vue -->
 <template>
   <div id="app">
     <header class="header">
-      <div class="nav-buttons">
+      <div class="nav-buttons-hoem">
         <button @click="currentPage = 'home'">ホーム</button>
+      </div>
+      <div class="nav-buttons-setting">
         <button @click="currentPage = 'setting'">管理者</button>
       </div>
     </header>
@@ -45,4 +48,8 @@ const currentPageComponent = computed(() => {
 function changePage(page) {
   currentPage.value = page
 }
+import { onMounted } from 'vue'
+onMounted(() => {
+  window.scrollTo(0, 0)
+})
 </script>
