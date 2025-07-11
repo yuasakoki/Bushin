@@ -1,4 +1,4 @@
-# src/python/utils.py
+# backend\app\utils.py
 
 def validate_name(name):
     if not isinstance(name, str):

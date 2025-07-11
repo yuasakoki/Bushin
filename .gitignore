@@ -8,10 +8,10 @@ pnpm-debug.log*
 lerna-debug.log*
 
 # Dependency directories
-node_modules/
+frontend/node_modules/
 
 # Build output
-dist/
+frontend/dist/
 dist-ssr/
 
 # Local env files
@@ -40,9 +40,10 @@ dist-ssr/
 
 # Python cache
 /src/python/__pycache__
-__pycache__/
+backend/__pycache__/
 *.py[cod]
 *$py.class
+*.pyc
 
 # VSCode workspace storage (オプション)
 .vscode-test/
@@ -57,7 +58,6 @@ __pycache__/
 # Gitの設定ファイルを除外
 *.json  # ※注意！プロジェクトに必要なjsonは除外しないこと
 
-src/python/data/names.json
-src/python/data/Referee.json
-*.pyc
-bushin-json-f5bf7f73fefb.json
+backend/app/data/names.json
+backend/app/data/Referee.json
+backend/credentials/*.json

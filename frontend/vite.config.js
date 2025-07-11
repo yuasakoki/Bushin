@@ -1,11 +1,12 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import path from 'path'
 
 export default defineConfig({
-  base: '/static/',  // こうするとビルド結果でJS・CSSが /static/assets/... になる
+  base: '', 
   plugins: [vue()],
   build: {
-    outDir: 'src/python/static', // Flaskのstaticフォルダに出力
+    outDir: path.resolve(__dirname, '../backend/app/static'),
     emptyOutDir: true,
   },
   server: {
@@ -13,4 +14,4 @@ export default defineConfig({
       '/api': 'http://localhost:5000'
     }
   }
-})
+});
