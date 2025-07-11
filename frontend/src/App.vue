@@ -1,26 +1,19 @@
 <template>
-    <div id="app">
+  <div id="app">
     <header class="header">
       <div class="nav-buttons">
         <button @click="currentPage = 'home'">ホーム</button>
         <button @click="currentPage = 'setting'">管理者</button>
       </div>
     </header>
-    <component
-      :is="currentPageComponent"
-      :onChangePage="changePage"
-    />
+    <component :is="currentPageComponent" :onChangePage="changePage" :category="currentPage" />
   </div>
 </template>
 <script setup>
 import Home from './components/Home.vue'
-import MenAdvanced from './components/result_page/MenAdvanced.vue'
-import MenIntermediate from './components/result_page/MenIntermediate.vue'
-import MenBeginner from './components/result_page/MenBeginner.vue'
-import WomenAdvanced from './components/result_page/WomenAdvanced.vue'
-import WomenIntermediate from './components/result_page/WomenIntermediate.vue'
-import WomenBeginner from './components/result_page/WomenBeginner.vue'
-import WomensOpen from './components/result_page/WomensOpen.vue'
+// 試合結果ページ
+import ResultView from './components/result_page/ResultView.vue'
+// 管理者ページ
 import Setting from './components/setting_page/Setting.vue'
 import PlayerRegistration from './components/setting_page/PlayerRegistration.vue'
 import RefereeRegistration from './components/setting_page/RefereeRegistration.vue'
@@ -28,23 +21,18 @@ import { ref, computed } from 'vue'
 
 const currentPage = ref('home')
 const currentPageComponent = computed(() => {
+  console.log('currentPage:', currentPage.value)
   switch (currentPage.value) {
     case 'home':
       return Home
-    case 'womensOpen':
-      return WomensOpen
-    case 'menAdvanced':
-      return MenAdvanced
-    case 'menIntermediate':
-      return MenIntermediate
-    case 'menBeginner':
-      return MenBeginner
-    case 'womenAdvanced':
-      return WomenAdvanced
-    case 'womenIntermediate':
-      return WomenIntermediate
-    case 'womenBeginner':
-      return WomenBeginner
+    case 'womensOpenResult':
+    case 'menAdvancedResult':
+    case 'menIntermediateResult':
+    case 'menBeginnerResult':
+    case 'womenAdvancedResult':
+    case 'womenIntermediateResult':
+    case 'womenBeginnerResult':
+      return ResultView
     case 'setting':
       return Setting
     case 'playerRegistration':

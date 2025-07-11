@@ -9,23 +9,23 @@
         <div class="category">
           <h3>男子</h3>
           <div class="btn-group">
-            <button @click="onChangePage('menAdvanced')">上級</button>
-            <button @click="onChangePage('menIntermediate')">中級</button>
-            <button @click="onChangePage('menBeginner')">初級</button>
+            <button @click="handleClick('menAdvancedResult')">上級</button>
+            <button @click="handleClick('menIntermediateResult')">中級</button>
+            <button @click="handleClick('menBeginnerResult')">初級</button>
           </div>
         </div>
         <div class="category">
           <h3>女子</h3>
           <div class="btn-group">
-            <button @click="onChangePage('womenAdvanced')">上級</button>
-            <button @click="onChangePage('womenIntermediate')">中級</button>
-            <button @click="onChangePage('womenBeginner')">初級</button>
+            <button @click="handleClick('womenAdvancedResult')">上級</button>
+            <button @click="handleClick('womenIntermediateResult')">中級</button>
+            <button @click="handleClick('womenBeginnerResult')">初級</button>
           </div>
         </div>
         <div class="category">
           <h3>一般</h3>
           <div class="btn-group">
-            <button @click="onChangePage('womensOpen')">一般女子</button>
+            <button @click="handleClick('womensOpenResult')">一般女子</button>
           </div>
         </div>
       </div>
@@ -34,23 +34,23 @@
         <div class="category">
           <h3>男子</h3>
           <div class="btn-group">
-            <button @click="onChangePage('menAdvanced')">上級</button>
-            <button @click="onChangePage('menIntermediate')">中級</button>
-            <button @click="onChangePage('menBeginner')">初級</button>
+            <button @click="handleClick('menAdvanced')">上級</button>
+            <button @click="handleClick('menIntermediate')">中級</button>
+            <button @click="handleClick('menBeginner')">初級</button>
           </div>
         </div>
         <div class="category">
           <h3>女子</h3>
           <div class="btn-group">
-            <button @click="onChangePage('womenAdvanced')">上級</button>
-            <button @click="onChangePage('womenIntermediate')">中級</button>
-            <button @click="onChangePage('womenBeginner')">初級</button>
+            <button @click="handleClick('womenAdvanced')">上級</button>
+            <button @click="handleClick('womenIntermediate')">中級</button>
+            <button @click="handleClick('womenBeginner')">初級</button>
           </div>
         </div>
         <div class="category">
           <h3>一般</h3>
           <div class="btn-group">
-            <button @click="onChangePage('womensOpen')">一般女子</button>
+            <button @click="handleClick('womensOpen')">一般女子</button>
           </div>
         </div>
       </div>
@@ -59,5 +59,11 @@
 </template>
 
 <script setup>
-defineProps(['onChangePage'])
+const props = defineProps(['onChangePage'])
+
+function handleClick(category) {
+  console.log('Selected category:', category)
+  // App.vueのページ変更のみを実行
+  props.onChangePage(category)
+}
 </script>
