@@ -1,5 +1,6 @@
 <template>
-  <div class="min-h-screen flex flex-col items-center justify-center bg-white px-6 py-12 font-sawarabi min-w-[320px] text-red-700">
+  <div
+    class="min-h-screen flex flex-col items-center justify-center bg-white px-6 py-12 font-sawarabi min-w-[320px] text-red-700">
 
     <h1 class="text-5xl font-bold mb-12 border-b-4 border-red-300 pb-3 animate-fadeInDown">
       選手登録
@@ -10,12 +11,12 @@
       <div>
         <label for="name" class="block mb-2 font-semibold text-red-700">名前</label>
         <input id="name" v-model="name" placeholder="名前を入力"
-        class="w-full px-4 py-3 border border-red-400 rounded-md bg-red-700 text-white placeholder-red-300 focus:outline-none focus:ring-4 focus:ring-red-400 transition-all duration-300 hover:scale-105" />
+          class="w-full px-4 py-3 border border-red-400 rounded-md bg-red-700 text-white placeholder-red-300 focus:outline-none focus:ring-4 focus:ring-red-400 transition-all duration-300 hover:scale-105" />
       </div>
       <!-- 階級 -->
       <div>
         <label class="block mb-2 font-semibold text-red-700">階級</label>
-        <select v-model="grade" 
+        <select v-model="grade"
           class="w-full px-4 py-3 border border-red-400 rounded-md bg-red-700 text-white placeholder-red-300 focus:outline-none focus:ring-4 focus:ring-red-400 transition-all duration-300 hover:scale-105">
           <option disabled value="" class="text-red-300">階級を選択</option>
           <option class="text-black">初級</option>
@@ -28,7 +29,7 @@
       <!-- 年齢 -->
       <div>
         <label class="block mb-2 font-semibold text-red-700">年齢</label>
-        <select v-model="age" 
+        <select v-model="age"
           class="w-full px-4 py-3 border border-red-400 rounded-md bg-red-700 text-white placeholder-red-300 focus:outline-none focus:ring-4 focus:ring-red-400 transition-all duration-300 hover:scale-105">
           <option disabled value="" class="text-red-300">年齢を選択</option>
           <option v-for="n in 51" :key="n" class="text-black">{{ n + 9 }}</option>
@@ -40,11 +41,11 @@
         <label class="block mb-2 font-semibold text-red-700">性別</label>
         <div class="flex gap-8">
           <label class="flex items-center gap-3 cursor-pointer select-none text-red-700">
-            <input type="radio" v-model="sex" value="男" class="accent-red-600" />
+            <input type="radio" v-model="gender" value="0" class="accent-red-600" />
             <span class="text-lg">男</span>
           </label>
           <label class="flex items-center gap-3 cursor-pointer select-none text-red-700">
-            <input type="radio" v-model="sex" value="女" class="accent-red-600" />
+            <input type="radio" v-model="gender" value="1" class="accent-red-600" />
             <span class="text-lg">女</span>
           </label>
         </div>
@@ -53,7 +54,7 @@
       <!-- 道場 -->
       <div>
         <label class="block mb-2 font-semibold text-red-700">道場</label>
-        <input v-model="affiliation" list="dojos" placeholder="道場名を入力" 
+        <input v-model="affiliation" list="dojos" placeholder="道場名を入力"
           class="w-full px-4 py-3 border border-red-400 rounded-md bg-red-700 text-white placeholder-red-300 focus:outline-none focus:ring-4 focus:ring-red-400 transition-all duration-300 hover:scale-105" />
         <datalist id="dojos">
           <option value="赤龍館" />
@@ -65,11 +66,11 @@
 
       <!-- ボタン -->
       <div class="flex justify-between mt-8">
-        <button @click="registerName" 
+        <button @click="registerName"
           class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg transform transition-transform duration-300 hover:scale-110 active:scale-95">
           登録
         </button>
-        <button @click="loadNames" 
+        <button @click="loadNames"
           class="bg-white border-2 border-red-600 text-red-600 font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-red-50 transform transition-transform duration-300 hover:scale-110 active:scale-95">
           読み取り
         </button>
@@ -90,12 +91,13 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(item, index) in names" :key="index" class="border-b border-gray-200 hover:bg-red-50 transition-colors">
+          <tr v-for="(item, index) in names" :key="index"
+            class="border-b border-gray-200 hover:bg-red-50 transition-colors">
             <td class="py-3 px-6 text-sm text-red-700">{{ index + 1 }}</td>
             <td class="py-3 px-6 text-sm text-red-700">{{ item.name }}</td>
             <td class="py-3 px-6 text-sm text-red-700">{{ item.grade }}</td>
             <td class="py-3 px-6 text-sm text-red-700">{{ item.age }}</td>
-            <td class="py-3 px-6 text-sm text-red-700">{{ item.sex }}</td>
+            <td class="py-3 px-6 text-sm text-red-700">{{ item.gender }}</td>
             <td class="py-3 px-6 text-sm text-red-700">{{ item.affiliation }}</td>
           </tr>
         </tbody>
@@ -113,7 +115,7 @@ import axios from 'axios'
 const name = ref('')
 const grade = ref('')
 const age = ref('')
-const sex = ref('男') // デフォルトは男性
+const gender = ref('0') // デフォルトは男性
 const affiliation = ref('')
 const names = ref([])
 const isLoading = ref(false)
@@ -135,22 +137,22 @@ const registerName = async () => {
     alert(error.value)
     return
   }
-  
+
   // 既存の名前と重複チェック
   isLoading.value = true
   try {
-    const res = await axios.post('/api/names', { 
-      name: name.value.trim() 
+    const res = await axios.post('/api/names', {
+      name: name.value.trim()
       , grade: grade.value.trim()
       , age: age.value.trim()
-      , sex: sex.value.trim()
+      , gender: gender.value.trim()
       , affiliation: affiliation.value.trim()
-    })  
-    names.value.push(res.data.data)  
+    })
+    names.value.push(res.data.data)
     name.value = ''
     grade.value = ''
-    age.value =''
-    sex.value = ''
+    age.value = ''
+    gender.value = ''
     affiliation.value = ''
   } catch (e) {
     console.error('名前の登録エラー:', e)
@@ -160,7 +162,7 @@ const registerName = async () => {
   }
 }
 
-const chekcvalue = () =>{
+const chekcvalue = () => {
   if (!name.value.trim()) {
     error.value = '名前を入力してください'
     return false
@@ -173,7 +175,7 @@ const chekcvalue = () =>{
     error.value = '年齢を選択してください'
     return false
   }
-  if(!affiliation.value.trim()) {
+  if (!affiliation.value.trim()) {
     error.value = '道場名を入力してください'
     return false
   }

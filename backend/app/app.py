@@ -5,22 +5,25 @@ from flask import Flask, request, jsonify, render_template
 from datetime import datetime
 from flask_cors import CORS
 from .utils import validate_name
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 IS_RENDER = os.environ.get("RENDER") == "1"
 if IS_RENDER:
-    from .json_manager import (
-        download_player_json_from_gcs,
-        upload_player_json_to_gcs,
-        download_referee_json_from_gcs,
-        upload_referee_json_to_gcs,
+    from .firestore_manager import (
+        download_player_data,
+        upload_player_data,
+        download_referee_data,
+        upload_referee_data,
     )
 
-    player_load_data = download_player_json_from_gcs
-    player_save_data = upload_player_json_to_gcs
-    referee_load_data = download_referee_json_from_gcs
-    referee_save_data = upload_referee_json_to_gcs
+    player_load_data = download_player_data
+    player_save_data = upload_player_data
+    referee_load_data = download_referee_data
+    referee_save_data = upload_referee_data
 else:
-    from .data_manager import (
+    from .local_data_manager import (
         player_load_data,
         player_save_data,
         referee_load_data,
@@ -35,6 +38,8 @@ app = Flask(
     template_folder=os.path.join(BASE_DIR, "templates"),
 )
 
+ERROE_MWSSAGWE = "内部サーバーエラーが発生しました"
+
 CORS(app)
 file_lock = threading.Lock()
 
@@ -47,6 +52,7 @@ def index():
 # 選手名前登録API
 @app.route("/api/names", methods=["POST"])
 def add_name():
+    logging.debug("/api/names POST request received")
     try:
         if not request.is_json:
             return (
@@ -57,7 +63,7 @@ def add_name():
         name = request.json.get("name")
         grade = request.json.get("grade")
         age = request.json.get("age")
-        sex = request.json.get("sex")
+        gender = request.json.get("gender")
         affiliation = request.json.get("affiliation")
 
         is_valid, result = validate_name(name)
@@ -74,7 +80,7 @@ def add_name():
                     item["name"] == name
                     and item.get("grade") == grade
                     and item.get("age") == age
-                    and item.get("sex") == sex
+                    and item.get("gender") == gender
                     and item.get("affiliation") == affiliation
                 ):
                     return jsonify({"error": "この選手はすでに登録されています"}), 409
@@ -84,20 +90,25 @@ def add_name():
                 "name": name,
                 "grade": grade,
                 "age": age,
-                "sex": sex,
+                "gender": gender,
                 "affiliation": affiliation,
-                "created_at": datetime.now().isoformat(),
-                "scores": {
-                    "round1": {"審査員A": 0, "審査員B": 0, "審査員C": 0},
-                    "round2": {"審査員D": 0, "審査員E": 0, "審査員F": 0},
-                    "round3": {
-                        "審査員G": 0,
-                        "審査員H": 0,
-                        "審査員I": 0,
-                        "審査員J": 0,
-                        "審査員K": 0,
+                "rounds": [
+                    {
+                        "round": 1,
+                        "court_code": "",
+                        "score": 0,
                     },
-                },
+                    {
+                        "round": 2,
+                        "court_code": "",
+                        "score": 0,
+                    },
+                    {
+                        "round": 3,
+                        "court_code": "",
+                        "score": 0,
+                    }
+                ],
             }
             data.append(new_entry)
 
@@ -109,7 +120,7 @@ def add_name():
         )
 
     except Exception as e:
-        return jsonify({"error": "内部サーバーエラーが発生しました"}), 500
+        return jsonify({"error": ERROE_MWSSAGWE + e}), 500
 
 
 # 選手名前一覧取得API
@@ -125,7 +136,7 @@ def get_names():
             200,
         )
     except Exception as e:
-        return jsonify({"error": "内部サーバーエラーが発生しました"}), 500
+        return jsonify({"error": ERROE_MWSSAGWE + e}), 500
 
 
 # 審判員名前登録API
@@ -168,7 +179,7 @@ def add_referee_name():
         )
 
     except Exception as e:
-        return jsonify({"error": "内部サーバーエラーが発生しました"}), 500
+        return jsonify({"error": ERROE_MWSSAGWE + e}), 500
 
 
 # 審判員名前一覧取得API
@@ -184,7 +195,7 @@ def get_referee_names():
             200,
         )
     except Exception as e:
-        return jsonify({"error": "内部サーバーエラーが発生しました"}), 500
+        return jsonify({"error": ERROE_MWSSAGWE + e}), 500
 
 
 # エラーハンドラー
@@ -200,7 +211,7 @@ def method_not_allowed(error):
 
 @app.errorhandler(500)
 def internal_error(error):
-    return jsonify({"error": "内部サーバーエラーが発生しました"}), 500
+        return jsonify({"error": ERROE_MWSSAGWE + error}), 500
 
 
 if __name__ == "__main__":

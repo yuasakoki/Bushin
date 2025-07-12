@@ -3,7 +3,6 @@ from google.cloud import firestore
 
 # コレクション名
 PLAYER_COLLECTION = 'PLAYER'
-SCORE_COLLECTION = 'SCORE'
 REFEREE_COLLECTION = 'REFEREE'
 REFEREE_ASSIGN_COLLECTION = 'REFEREE_ASSIGN'
 DEFAULT_DOC_ID = 'default'
@@ -30,13 +29,6 @@ def download_player_data():
 
 def upload_player_data(data):
     upload_data_to_firestore(data, PLAYER_COLLECTION)
-
-# 得点一覧取得
-def download_player_data():
-    return download_data_from_firestore(SCORE_COLLECTION)
-
-def upload_player_data(data):
-    upload_data_to_firestore(data, SCORE_COLLECTION)
 
 # 審判員一覧取得
 def download_referee_data():

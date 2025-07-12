@@ -22,7 +22,7 @@
             <td class="py-3 px-6 text-sm" :class="textClass">{{ item.name }}</td>
             <td class="py-3 px-6 text-sm" :class="textClass">{{ item.grade }}</td>
             <td class="py-3 px-6 text-sm" :class="textClass">{{ item.age }}</td>
-            <td class="py-3 px-6 text-sm" :class="textClass">{{ item.sex }}</td>
+            <td class="py-3 px-6 text-sm" :class="textClass">{{ item.gender }}</td>
             <td class="py-3 px-6 text-sm" :class="textClass">{{ item.affiliation }}</td>
           </tr>
         </tbody>
@@ -36,7 +36,6 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import axios from 'axios'
 
 console.log('ResultView page open!!!!!!!!!!!!')
 
@@ -81,8 +80,8 @@ const fetchData = async () => {
   try {
     // サンプルデータ（実際のAPIエンドポイントに置き換えてください）
     names.value = [
-      { name: '田中太郎', grade: '初段', age: 25, sex: '男', affiliation: '○○道場' },
-      { name: '佐藤花子', grade: '二段', age: 30, sex: '女', affiliation: '△△道場' }
+      { name: '田中太郎', grade: '初段', age: 25, gender: '男', affiliation: '○○道場' },
+      { name: '佐藤花子', grade: '二段', age: 30, gender: '女', affiliation: '△△道場' }
     ]
   } catch (error) {
     console.error('データの取得に失敗しました:', error)
