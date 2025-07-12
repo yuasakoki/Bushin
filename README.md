@@ -77,36 +77,6 @@ https://bushin-app.onrender.com
 
 ---
 
-## 🖼 画面イメージ（予定）
-
-| 画面           | 内容                                       |
-|----------------|--------------------------------------------|
-| ホーム画面     | 赤・白グラデーション背景＋カテゴリカードUI |
-| 登録画面       | 選手/審判のフォーム＋リアルタイムバリデーション |
-| 割り当て・スコア画面 | テーブル表示＋スコア入力と集計反映         |
-
-※デモ画像・GIFは今後追加予定
-
----
-
-## 📁 ソース構成（抜粋）
-Bushin/
-├── frontend/ # Vue3 + Vite + Tailwind
-│ ├── public/
-│ └── src/
-│      ├── App.vue
-│      └── components/
-├── backend/
-│ └── app/
-│      ├── app.py # Flask APIルーター
-│      ├── firestore_manager.py # Firestoreアクセス管理
-│      ├── local_data_manager.py # ローカルモード用データ操作
-│      └── utils.py
-├── requirements.txt
-├── README.md
-└── ...
-
-
 
 残タスク<br/>
 類似する複数画面を1画面にコンポーネント化
