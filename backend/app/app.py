@@ -1,27 +1,27 @@
-## backend\app\app.py
 import os
 import threading
-from flask import Flask, request, jsonify, render_template
+import logging
 from datetime import datetime
+from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from .utils import validate_name
-import logging
+import uuid
 
+# ロギング設定
 logging.basicConfig(level=logging.DEBUG)
 
+# 定数
+ERROR_MESSAGE = "内部サーバーエラーが発生しました"
+
+# 環境によってデータマネージャを切り替え
 IS_RENDER = os.environ.get("RENDER") == "1"
 if IS_RENDER:
     from .firestore_manager import (
-        download_player_data,
-        upload_player_data,
-        download_referee_data,
-        upload_referee_data,
+        download_player_data as player_load_data,
+        upload_player_data as player_save_data,
+        download_referee_data as referee_load_data,
+        upload_referee_data as referee_save_data,
     )
-
-    player_load_data = download_player_data
-    player_save_data = upload_player_data
-    referee_load_data = download_referee_data
-    referee_save_data = upload_referee_data
 else:
     from .local_data_manager import (
         player_load_data,
@@ -30,6 +30,7 @@ else:
         referee_save_data,
     )
 
+# Flaskアプリ設定
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 app = Flask(
     __name__,
@@ -37,11 +38,14 @@ app = Flask(
     static_url_path="/static",
     template_folder=os.path.join(BASE_DIR, "templates"),
 )
-
-ERROE_MWSSAGWE = "内部サーバーエラーが発生しました"
-
 CORS(app)
 file_lock = threading.Lock()
+
+
+# 共通エラーレスポンス
+def handle_exception(e):
+    logging.exception(e)
+    return jsonify({"error": ERROR_MESSAGE + ": " + str(e)}), 500
 
 
 @app.route("/")
@@ -49,169 +53,120 @@ def index():
     return render_template("index.html")
 
 
-# 選手名前登録API
 @app.route("/api/names", methods=["POST"])
-def add_name():
+def add_player():
     logging.debug("/api/names POST request received")
     try:
         if not request.is_json:
-            return (
-                jsonify({"error": "リクエストボディはJSON形式である必要があります"}),
-                400,
-            )
+            return jsonify({"error": "リクエストボディはJSON形式である必要があります"}), 400
 
-        name = request.json.get("name")
-        grade = request.json.get("grade")
-        age = request.json.get("age")
-        gender = request.json.get("gender")
-        affiliation = request.json.get("affiliation")
+        data = request.json
+        name, grade, age, gender, affiliation = (
+            data.get("name"),
+            data.get("grade"),
+            data.get("age"),
+            data.get("gender"),
+            data.get("affiliation"),
+        )
 
-        is_valid, result = validate_name(name)
+        is_valid, validated_name = validate_name(name)
         if not is_valid:
-            return jsonify({"error": result}), 400
-        name = result
+            return jsonify({"error": validated_name}), 400
 
-        with file_lock:
-            data = player_load_data()
+        name = validated_name
 
-            # 同一人物の重複チェック（複数項目で一致するか確認）
-            for item in data:
-                if (
-                    item["name"] == name
-                    and item.get("grade") == grade
-                    and item.get("age") == age
-                    and item.get("gender") == gender
-                    and item.get("affiliation") == affiliation
-                ):
-                    return jsonify({"error": "この選手はすでに登録されています"}), 409
+        existing_players = player_load_data()
 
-            new_entry = {
-                "id": len(data) + 1,
-                "name": name,
-                "grade": grade,
-                "age": age,
-                "gender": gender,
-                "affiliation": affiliation,
-                "rounds": [
-                    {
-                        "round": 1,
-                        "court_code": "",
-                        "score": 0,
-                    },
-                    {
-                        "round": 2,
-                        "court_code": "",
-                        "score": 0,
-                    },
-                    {
-                        "round": 3,
-                        "court_code": "",
-                        "score": 0,
-                    }
-                ],
-            }
-            data.append(new_entry)
+        # 重複チェック
+        for player in existing_players:
+            if all([
+                player["name"] == name,
+                player.get("grade") == grade,
+                player.get("age") == age,
+                player.get("gender") == gender,
+                player.get("affiliation") == affiliation,
+            ]):
+                return jsonify({"error": "この選手はすでに登録されています"}), 409
 
-            player_save_data(data)
+        new_entry = {
+            "id": str(uuid.uuid4()),
+            "name": name,
+            "grade": grade,
+            "age": age,
+            "gender": gender,
+            "affiliation": affiliation,
+            "create_datetime": datetime.now().isoformat(),
+            "rounds": [{"round": i, "court_code": "", "score": 0} for i in range(1, 4)],
+        }
 
-        return (
-            jsonify({"message": "名前が正常に追加されました", "data": new_entry}),
-            201,
-        )
+        added_player = player_save_data(new_entry)
+        return jsonify({"message": "名前が正常に追加されました", "data": added_player}), 201
 
     except Exception as e:
-        return jsonify({"error": ERROE_MWSSAGWE + e}), 500
+        return handle_exception(e)
 
 
-# 選手名前一覧取得API
 @app.route("/api/names", methods=["GET"])
-def get_names():
+def get_players():
     try:
-        with file_lock:
-            data = player_load_data()
-        return (
-            jsonify(
-                {"message": "名前一覧を取得しました", "data": data, "count": len(data)}
-            ),
-            200,
-        )
+        players = player_load_data()
+        return jsonify({"message": "名前一覧を取得しました", "data": players, "count": len(players)}), 200
     except Exception as e:
-        return jsonify({"error": ERROE_MWSSAGWE + e}), 500
+        return handle_exception(e)
 
 
-# 審判員名前登録API
-@app.route("/api/Referee", methods=["POST"])
-def add_referee_name():
+@app.route("/api/referees", methods=["POST"])
+def add_referee():
     try:
         if not request.is_json:
-            return (
-                jsonify({"error": "リクエストボディはJSON形式である必要があります"}),
-                400,
-            )
+            return jsonify({"error": "リクエストボディはJSON形式である必要があります"}), 400
 
         name = request.json.get("name")
-
-        is_valid, result = validate_name(name)
+        is_valid, validated_name = validate_name(name)
         if not is_valid:
-            return jsonify({"error": result}), 400
-        name = result
+            return jsonify({"error": validated_name}), 400
 
         with file_lock:
             data = referee_load_data()
-
-            # 同一人物の重複チェック（名前のみ）
-            for item in data:
-                if item["name"] == name:
-                    return jsonify({"error": "この審判員はすでに登録されています"}), 409
+            if any(r["name"] == validated_name for r in data):
+                return jsonify({"error": "この審判員はすでに登録されています"}), 409
 
             new_entry = {
-                "name": name,
-                "created_at": datetime.now().isoformat(),
                 "id": len(data) + 1,
+                "name": validated_name,
+                "created_at": datetime.now().isoformat(),
             }
             data.append(new_entry)
-
             referee_save_data(data)
 
-        return (
-            jsonify({"message": "名前が正常に追加されました", "data": new_entry}),
-            201,
-        )
+        return jsonify({"message": "名前が正常に追加されました", "data": new_entry}), 201
 
     except Exception as e:
-        return jsonify({"error": ERROE_MWSSAGWE + e}), 500
+        return handle_exception(e)
 
 
-# 審判員名前一覧取得API
-@app.route("/api/Referee", methods=["GET"])
-def get_referee_names():
+@app.route("/api/referees", methods=["GET"])
+def get_referees():
     try:
         with file_lock:
             data = referee_load_data()
-        return (
-            jsonify(
-                {"message": "名前一覧を取得しました", "data": data, "count": len(data)}
-            ),
-            200,
-        )
+        return jsonify({"message": "名前一覧を取得しました", "data": data, "count": len(data)}), 200
     except Exception as e:
-        return jsonify({"error": ERROE_MWSSAGWE + e}), 500
+        return handle_exception(e)
 
 
-# エラーハンドラー
+# 共通エラーハンドラ
 @app.errorhandler(404)
-def not_found(error):
+def not_found(_):
     return jsonify({"error": "エンドポイントが見つかりません"}), 404
 
-
 @app.errorhandler(405)
-def method_not_allowed(error):
+def method_not_allowed(_):
     return jsonify({"error": "許可されていないメソッドです"}), 405
 
-
 @app.errorhandler(500)
-def internal_error(error):
-        return jsonify({"error": ERROE_MWSSAGWE + error}), 500
+def internal_server_error(e):
+    return handle_exception(e)
 
 
 if __name__ == "__main__":
