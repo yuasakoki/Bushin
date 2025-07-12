@@ -7,6 +7,9 @@ from flask_cors import CORS
 from .utils import validate_name
 import uuid
 
+from dotenv import load_dotenv
+load_dotenv()
+
 # ロギング設定
 logging.basicConfig(level=logging.DEBUG)
 
