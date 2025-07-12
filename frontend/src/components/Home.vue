@@ -3,7 +3,7 @@
   <section class="home-hero">
     <div class="hero-bg"></div>
     <div class="hero-content">
-      <h1 class="main-title">新國際空手道連盟</h1>
+      <h1 class="sub-title">新國際空手道連盟</h1>
       <h1 class="main-title">武神會館</h1>
       <div class="divider"></div>
       <h1 class="sub-title">第49回</h1>
