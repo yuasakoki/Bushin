@@ -124,9 +124,13 @@ const error = ref('')
 const loadNames = async () => {
   try {
     const res = await axios.get('/api/names')
-    names.value = res.data.data
+    // res.data.data は {"rmunA07sV68VtlCQj0Tb": {...}, "別のID": {...}} のようなオブジェクト
+    // v-for でループできるように、このオブジェクトの「値（value）」部分だけを配列にする
+    names.value = Object.values(res.data.data || {}) // res.data.dataがnull/undefinedの場合に備えて空オブジェクトをデフォルトにする
+    console.log("Names loaded:", names.value); // デバッグ用にログ出力
   } catch (e) {
     alert('名前一覧の読み込みに失敗しました')
+    console.error('名前一覧の読み込みエラー:', e); // エラー詳細をコンソールに出力
   }
 }
 
