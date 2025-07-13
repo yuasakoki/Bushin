@@ -1,7 +1,6 @@
 # backend\app\json_manager.py
 # google-cloudとの連携を行うためのクラス
 import json
-from google.cloud import firestore
 from google.cloud import storage
 
 BUCKET_NAME = 'bushin-json'  # ご自身のバケット名

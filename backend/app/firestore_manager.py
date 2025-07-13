@@ -1,24 +1,12 @@
 # backend\app\firestore_manager.py
 import os
-
-
-credentials_path = os.environ["GOOGLE_APPLICATION_CREDENTIALS"]
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
-
 from google.cloud import firestore
-
-
-
-# 明示的に環境変数を参照しているか確認！
-print("GOOGLE_APPLICATION_CREDENTIALS:", os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"))
-
-db = firestore.Client() 
 
 # コレクション名
 PLAYER_COLLECTION = 'PLAYER'
 REFEREE_COLLECTION = 'REFEREE'
 REFEREE_ASSIGN_COLLECTION = 'REFEREE_ASSIGN'
-DEFAULT_DOC_ID = 'default'
+DEFAULT_DOC_ID = 'bushin'
 
 db = firestore.Client()
 
