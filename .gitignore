@@ -8,7 +8,7 @@ pnpm-debug.log*
 lerna-debug.log*
 
 # Dependency directories
-frontend/node_modules/
+node_modules/
 
 # Build output
 frontend/dist/
