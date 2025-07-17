@@ -8,30 +8,27 @@ from .utils import validate_name
 import uuid
 
 from dotenv import load_dotenv
-load_dotenv()
 
-# ロギング設定
-logging.basicConfig(level=logging.DEBUG)
+load_dotenv()
+from .firestore_manager import (
+    download_player_data as player_load_data,
+    upload_player_data as player_save_data,
+    download_referee_data as referee_load_data,
+    upload_referee_data as referee_save_data,
+)
+
+# ロガーの設定
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler()  # ターミナルへの出力
+    ]
+)
+logger = logging.getLogger(__name__)
 
 # 定数
 ERROR_MESSAGE = "内部サーバーエラーが発生しました"
-
-# 環境によってデータマネージャを切り替え
-IS_RENDER = os.environ.get("RENDER") == "1"
-if IS_RENDER:
-    from .firestore_manager import (
-        download_player_data as player_load_data,
-        upload_player_data as player_save_data,
-        download_referee_data as referee_load_data,
-        upload_referee_data as referee_save_data,
-    )
-else:
-    from .local_data_manager import (
-        player_load_data,
-        player_save_data,
-        referee_load_data,
-        referee_save_data,
-    )
 
 # Flaskアプリ設定
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -61,7 +58,10 @@ def add_player():
     logging.debug("/api/names POST request received")
     try:
         if not request.is_json:
-            return jsonify({"error": "リクエストボディはJSON形式である必要があります"}), 400
+            return (
+                jsonify({"error": "リクエストボディはJSON形式である必要があります"}),
+                400,
+            )
 
         data = request.json
         name, grade, age, gender, affiliation = (
@@ -79,17 +79,18 @@ def add_player():
         name = validated_name
 
         existing_players = player_load_data()
-
+        logger.info(f"existing_players: {existing_players}")
+        if len(existing_players) != 1:
         # 重複チェック
-        for player in existing_players:
-            if all([
-                player["name"] == name,
-                player.get("grade") == grade,
-                player.get("age") == age,
-                player.get("gender") == gender,
-                player.get("affiliation") == affiliation,
-            ]):
-                return jsonify({"error": "この選手はすでに登録されています"}), 409
+            for player in existing_players:
+                if (
+                    player.get("name") == name
+                    and player.get("grade") == grade
+                    and player.get("age") == age
+                    and player.get("gender") == gender
+                    and player.get("affiliation") == affiliation
+                ):
+                    return jsonify({"error": "この選手はすでに登録されています"}), 409
 
         new_entry = {
             "id": str(uuid.uuid4()),
@@ -102,8 +103,16 @@ def add_player():
             "rounds": [{"round": i, "court_code": "", "score": 0} for i in range(1, 4)],
         }
 
-        added_player = player_save_data(new_entry)
-        return jsonify({"message": "名前が正常に追加されました", "data": added_player}), 201
+        player_save_data(new_entry)
+        all_players = player_load_data()
+        return (
+            jsonify({
+                "message": "名前が正常に追加されました",
+                "data": all_players  # 一覧として返す
+            }),
+    201,
+)
+
 
     except Exception as e:
         return handle_exception(e)
@@ -113,7 +122,16 @@ def add_player():
 def get_players():
     try:
         players = player_load_data()
-        return jsonify({"message": "名前一覧を取得しました", "data": players, "count": len(players)}), 200
+        return (
+            jsonify(
+                {
+                    "message": "名前一覧を取得しました",
+                    "data": players,
+                    "count": len(players),
+                }
+            ),
+            200,
+        )
     except Exception as e:
         return handle_exception(e)
 
@@ -122,7 +140,10 @@ def get_players():
 def add_referee():
     try:
         if not request.is_json:
-            return jsonify({"error": "リクエストボディはJSON形式である必要があります"}), 400
+            return (
+                jsonify({"error": "リクエストボディはJSON形式である必要があります"}),
+                400,
+            )
 
         name = request.json.get("name")
         is_valid, validated_name = validate_name(name)
@@ -142,7 +163,10 @@ def add_referee():
             data.append(new_entry)
             referee_save_data(data)
 
-        return jsonify({"message": "名前が正常に追加されました", "data": new_entry}), 201
+        return (
+            jsonify({"message": "名前が正常に追加されました", "data": new_entry}),
+            201,
+        )
 
     except Exception as e:
         return handle_exception(e)
@@ -153,7 +177,12 @@ def get_referees():
     try:
         with file_lock:
             data = referee_load_data()
-        return jsonify({"message": "名前一覧を取得しました", "data": data, "count": len(data)}), 200
+        return (
+            jsonify(
+                {"message": "名前一覧を取得しました", "data": data, "count": len(data)}
+            ),
+            200,
+        )
     except Exception as e:
         return handle_exception(e)
 
@@ -163,9 +192,11 @@ def get_referees():
 def not_found(_):
     return jsonify({"error": "エンドポイントが見つかりません"}), 404
 
+
 @app.errorhandler(405)
 def method_not_allowed(_):
     return jsonify({"error": "許可されていないメソッドです"}), 405
+
 
 @app.errorhandler(500)
 def internal_server_error(e):

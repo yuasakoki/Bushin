@@ -82,22 +82,22 @@
       <table class="min-w-full border-collapse table-auto">
         <thead class="bg-red-100 border-b-2 border-red-300">
           <tr>
-            <th class="py-4 px-6 text-left font-semibold text-red-700">No.</th>
-            <th class="py-4 px-6 text-left font-semibold text-red-700">名前</th>
-            <th class="py-4 px-6 text-left font-semibold text-red-700">階級</th>
-            <th class="py-4 px-6 text-left font-semibold text-red-700">年齢</th>
-            <th class="py-4 px-6 text-left font-semibold text-red-700">性別</th>
-            <th class="py-4 px-6 text-left font-semibold text-red-700">道場</th>
+            <th class="py-4 px-6 text-sm font-semibold text-red-700">No.</th>
+            <th class="py-4 px-6 text-sm font-semibold text-red-700">名前</th>
+            <th class="py-4 px-6 text-sm font-semibold text-red-700">階級</th>
+            <th class="py-4 px-6 text-sm font-semibold text-red-700">年齢</th>
+            <th class="py-4 px-6 text-sm font-semibold text-red-700">性別</th>
+            <th class="py-4 px-6 text-sm font-semibold text-red-700">道場</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="(item, index) in names" :key="index"
-            class="border-b border-gray-200 hover:bg-red-50 transition-colors">
-            <td class="py-3 px-6 text-sm text-red-700">{{ index + 1 }}</td>
+            class="border-b border-gray-200 hover:bg-red-50 transition-colors animate-fadeInUp">
+            <td class="py-3 px-6 text-sm text-red-700">{{ names.length - index }}</td>
             <td class="py-3 px-6 text-sm text-red-700">{{ item.name }}</td>
             <td class="py-3 px-6 text-sm text-red-700">{{ item.grade }}</td>
             <td class="py-3 px-6 text-sm text-red-700">{{ item.age }}</td>
-            <td class="py-3 px-6 text-sm text-red-700">{{ item.gender }}</td>
+            <td class="py-3 px-6 text-sm text-red-700">{{ item.gender === '0' ? '男' : '女' }}</td>
             <td class="py-3 px-6 text-sm text-red-700">{{ item.affiliation }}</td>
           </tr>
         </tbody>
@@ -124,8 +124,6 @@ const error = ref('')
 const loadNames = async () => {
   try {
     const res = await axios.get('/api/names')
-    // res.data.data は {"rmunA07sV68VtlCQj0Tb": {...}, "別のID": {...}} のようなオブジェクト
-    // v-for でループできるように、このオブジェクトの「値（value）」部分だけを配列にする
     names.value = Object.values(res.data.data || {}) // res.data.dataがnull/undefinedの場合に備えて空オブジェクトをデフォルトにする
     console.log("Names loaded:", names.value); // デバッグ用にログ出力
   } catch (e) {
@@ -152,11 +150,15 @@ const registerName = async () => {
       , gender: gender.value.trim()
       , affiliation: affiliation.value.trim()
     })
-    names.value.push(res.data.data)
+    setTimeout(loadNames, 500); // 読込が早すぎるため0.5秒待機
+    if (res.data?.data) {
+      names.value.push(res.data.data)
+    } else {
+      console.warn("登録レスポンスに有効なデータが含まれていません:", res.data)
+    }
     name.value = ''
     grade.value = ''
     age.value = ''
-    gender.value = ''
     affiliation.value = ''
   } catch (e) {
     console.error('名前の登録エラー:', e)
@@ -186,8 +188,8 @@ const chekcvalue = () => {
   return true
 }
 
-onMounted(() => {
-  loadNames()
-  setInterval(loadNames, 10000); // 10秒ごとに取得
-})
+// onMounted(() => {
+//   loadNames()
+//   setInterval(loadNames, 10000); // 10秒ごとに取得
+// })
 </script>
