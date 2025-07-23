@@ -61,3 +61,4 @@ backend/__pycache__/
 backend/app/data/names.json
 backend/app/data/Referee.json
 backend/credentials/*.json
+functions/
