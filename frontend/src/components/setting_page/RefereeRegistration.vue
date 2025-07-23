@@ -2,29 +2,68 @@
   <div class="container">
     <h1>審判員登録</h1>
     <div class="form-group">
-      <label>名前</label><br />
+      <label>名前</label>
       <input v-model="name" placeholder="名前を入力" />
     </div>
-    <div class="form-group" v-for="(item, idx) in gradeCourtList" :key="idx">
-      <label>{{ item.label }} 階級</label>
-      <select v-model="item.grade">
+    <div class="form-group" v-for="(item, idx) in assignments" :key="idx">
+      <label>{{ item.round }}</label>
+      <select v-model="item.court_code">
         <option value="">未選択</option>
-        <option>初級</option>
-        <option>中級</option>
-        <option>上級</option>
-        <option>一般女子</option>
+        <option>男子/初級/Aコート</option>
+        <option>男子/初級/Bコート</option>
+        <option>男子/初級/Cコート</option>
+        <option>男子/初級/Dコート</option>
+        <option>男子/初級/Eコート</option>
+        <option>男子/初級/Fコート</option>
+        <option>男子/初級/Gコート</option>
+        <option>男子/初級/Hコート</option>
+        <option>男子/初級/Iコート</option>
+        <option>男子/中級/Aコート</option>
+        <option>男子/中級/Bコート</option>
+        <option>男子/中級/Cコート</option>
+        <option>男子/中級/Dコート</option>
+        <option>男子/中級/Eコート</option>
+        <option>男子/中級/Fコート</option>
+        <option>男子/中級/Gコート</option>
+        <option>男子/中級/Hコート</option>
+        <option>男子/中級/Iコート</option>
+        <option>男子/上級/Aコート</option>
+        <option>男子/上級/Bコート</option>
+        <option>男子/上級/Cコート</option>
+        <option>男子/上級/Dコート</option>
+        <option>女子/初級/Aコート</option>
+        <option>女子/初級/Bコート</option>
+        <option>女子/初級/Cコート</option>
+        <option>女子/初級/Dコート</option>
+        <option>女子/初級/Eコート</option>
+        <option>女子/初級/Fコート</option>
+        <option>女子/初級/Gコート</option>
+        <option>女子/初級/Hコート</option>
+        <option>女子/初級/Iコート</option>
+        <option>女子/中級/Aコート</option>
+        <option>女子/中級/Bコート</option>
+        <option>女子/中級/Cコート</option>
+        <option>女子/中級/Dコート</option>
+        <option>女子/中級/Eコート</option>
+        <option>女子/中級/Fコート</option>
+        <option>女子/中級/Gコート</option>
+        <option>女子/中級/Hコート</option>
+        <option>女子/中級/Iコート</option>
+        <option>女子/上級/Aコート</option>
+        <option>女子/上級/Bコート</option>
+        <option>女子/上級/Cコート</option>
+        <option>女子/上級/Dコート</option>
+        <option>一般女子/Aコート</option>
+        <option>一般女子/Bコート</option>
+        <option>一般女子/Cコート</option>
+        <option>一般女子/Dコート</option>
       </select>
-      <label style="margin-left:1em;">コート</label>
-      <select v-model="item.court">
-        <option value="">未選択</option>
-        <option>A</option>
-        <option>B</option>
-        <option>C</option>
-        <option>D</option>
-        <option>E</option>
-        <option>F</option>
-        <option>G</option>
-        <option>H</option>
+      <label>役職</label>
+      <select v-model="item.post_code">
+        <option value=""></option>
+        <option>主審</option>
+        <option>副審</option>
+        <option>記録</option>
       </select>
     </div>
     <div class="form-group">
@@ -37,15 +76,15 @@
           <tr>
             <th>No.</th>
             <th>名前</th>
-            <th v-for="(item, idx) in gradeCourtList" :key="idx">{{ item.label }} 階級</th>
+            <th v-for="(item, idx) in assignments" :key="idx">{{ item.round }} 回目</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="(item, index) in names" :key="index">
-            <td>{{ index + 1 }}</td>
+            <td>{{ names.length - index }}</td>
             <td>{{ item.name }}</td>
-            <td v-for="(gc, idx) in item.gradeCourts || []" :key="idx">
-              {{ gc.grade }} / {{ gc.court }}
+            <td v-for="(round, idx) in item.assignments" :key="idx">
+              {{ round.court_code ? `${round.court_code} / ${round.post_code}` : '-' }}
             </td>
           </tr>
         </tbody>
@@ -59,13 +98,13 @@ import { ref, onMounted } from 'vue'
 import axios from 'axios'
 
 const name = ref('')
-const gradeCourtList = ref([
-  { label: '1', grade: '', court: '' },
-  { label: '2', grade: '', court: '' },
-  { label: '3', grade: '', court: '' },
-  { label: '4', grade: '', court: '' },
-  { label: '5', grade: '', court: '' },
-  { label: '6', grade: '', court: '' }
+const assignments = ref([
+  { round: '1', court_code: '', post_code: '' },
+  { round: '2', court_code: '', post_code: '' },
+  { round: '3', court_code: '', post_code: '' },
+  { round: '4', court_code: '', post_code: '' },
+  { round: '5', court_code: '', post_code: '' },
+  { round: '6', court_code: '', post_code: '' }
 ])
 const names = ref([])
 const isLoading = ref(false)
@@ -73,11 +112,40 @@ const error = ref('')
 
 const loadNames = async () => {
   try {
-    const res = await axios.get('/api/Referee')
-    names.value = res.data.data
+    const res = await axios.get('/api/referees')
+    console.log("API Response:", res.data)
+
+    if (res.data && Array.isArray(res.data)) {
+      // APIレスポンスが配列の場合の処理
+      names.value = res.data.map(referee => ({
+        name: referee.name,
+        assignments: referee.rounds.map(round => ({
+          round: round.round,
+          court_code: round.court_code,
+          post_code: round.post_code
+        }))
+      }))
+    } else if (res.data && res.data.data) {
+      // APIレスポンスがオブジェクトで、dataプロパティを持つ場合の処理
+      const refereeData = Array.isArray(res.data.data) ? res.data.data : [res.data.data]
+
+      names.value = refereeData.map(referee => ({
+        name: referee.name,
+        assignments: (referee.rounds || []).map(round => ({
+          round: round.round,
+          court_code: round.court_code || '',
+          post_code: round.post_code || ''
+        }))
+      }))
+    } else {
+      names.value = []
+    }
+
+    console.log("処理後のデータ:", names.value)
   } catch (e) {
-    alert('名前一覧の読み込みに失敗しました')
-    console.error(e)
+    console.error('データ読み込みエラー:', e)
+    alert('審判員データの読み込みに失敗しました')
+    names.value = []
   }
 }
 
@@ -87,16 +155,35 @@ const registerName = async () => {
     alert('名前を入力してください')
     return
   }
-  
+
   isLoading.value = true
   try {
-    const res = await axios.post('/api/Referee', {
+    // 審判員データの構築
+    const refereeData = {
       name: name.value.trim(),
-      gradeCourts: gradeCourtList.value.map(gc => ({ grade: gc.grade, court: gc.court }))
-    })
-    names.value.push(res.data.data)
+      assignments: assignments.value.map(gc => ({
+        court_code: gc.court_code,
+        post_code: gc.post_code,
+        round: gc.round
+      }))
+    }
+
+    // APIにPOSTリクエスト
+    const res = await axios.post('/api/referees', refereeData)
+    if (res.data?.data) {
+      names.value.unshift(res.data.data)
+    } else {
+      console.warn("登録レスポンスに有効なデータが含まれていません:", res.data)
+    }
+
+    // フォームのリセット
     name.value = ''
-    gradeCourtList.value.forEach(gc => { gc.grade = ''; gc.court = '' })
+    assignments.value.forEach(gc => {
+      gc.court_code = ''
+      gc.post_code = ''
+    })
+
+    console.log("登録後のデータ:", names.value)
   } catch (e) {
     alert('登録失敗: ' + (e.response?.data?.error || e.message))
     console.error('名前の登録エラー:', e)
@@ -108,6 +195,6 @@ const registerName = async () => {
 
 onMounted(() => {
   loadNames()
-  setInterval(loadNames, 10000)
+  // setInterval(loadNames, 10000)
 })
 </script>

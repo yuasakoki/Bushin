@@ -63,15 +63,6 @@ const title = computed(() => {
   if (props.category === 'womenIntermediateResult') return '女子 中級 - 出場選手'
   if (props.category === 'womenBeginnerResult') return '女子 初級 - 出場選手'
   if (props.category === 'womensOpenResult') return '一般女子 - 出場選手'
-
-  // 順位（非Result系）保留
-  // if (props.category === 'menAdvanced') return '男子 上級 - 順位'
-  // if (props.category === 'menIntermediate') return '男子 中級 - 順位'
-  // if (props.category === 'menBeginner') return '男子 初級 - 順位'
-  // if (props.category === 'womenAdvanced') return '女子 上級 - 順位'
-  // if (props.category === 'womenIntermediate') return '女子 中級 - 順位'
-  // if (props.category === 'womenBeginner') return '女子 初級 - 順位'
-  // if (props.category === 'womensOpen') return '一般女子 - 順位'
   return '普及までお待ちください'
 })
 

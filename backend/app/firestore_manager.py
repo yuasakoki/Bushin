@@ -23,7 +23,6 @@ logger = logging.getLogger(__name__)
 # コレクション名
 PLAYER_COLLECTION = 'PLAYER'
 REFEREE_COLLECTION = 'REFEREE'
-REFEREE_ASSIGN_COLLECTION = 'REFEREE_ASSIGN'
 
 # Firestore Clientの初期化（環境によって切り替え）
 def initialize_firestore_client():
@@ -50,26 +49,7 @@ def download_data_from_firestore(collection_name: str) -> List[Dict[str, Any]]:
         for doc in docs:
             # Firestoreのドキュメントをdict形式に変換
             data = doc.to_dict()
-            # ドキュメントIDも保存
-            # data['id'] = doc.id
-            
-            # データ型をJSON互換に変換
-            formatted_data = {
-                "id": str(data.get("id", "")),
-                "name": str(data.get("name", "")),
-                "grade": str(data.get("grade", "")),
-                "age": str(data.get("age", "")),
-                "gender": str(data.get("gender", "")),
-                "affiliation": str(data.get("affiliation", "")),
-                "create_datetime": data.get("create_datetime", ""),
-                "rounds": data.get("rounds", [
-                    {"round": 1, "court_code": "", "score": 0},
-                    {"round": 2, "court_code": "", "score": 0},
-                    {"round": 3, "court_code": "", "score": 0}
-                ])
-            }
-            
-            result.append(formatted_data)
+            result.append(data)
             
         logger.debug(f"Retrieved {len(result)} documents")
         return result
@@ -97,10 +77,3 @@ def download_referee_data():
 
 def upload_referee_data(data):
     upload_data_to_firestore(data, REFEREE_COLLECTION)
-
-# 審判員割り当て一覧取得
-def download_referee_data():
-    return download_data_from_firestore(REFEREE_ASSIGN_COLLECTION)
-
-def upload_referee_data(data):
-    upload_data_to_firestore(data, REFEREE_ASSIGN_COLLECTION)

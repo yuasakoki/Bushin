@@ -1,5 +1,5 @@
 <template>
-  <h1>管理者メニュー</h1> 
+  <h1>管理者メニュー</h1>
   <div id="settings">
     <button @click="onChangePage('refereeRegistration')">審判員</button><br>
     <button @click="onChangePage('playerRegistration')">選手登録</button><br>
@@ -9,9 +9,3 @@
 <script setup>
 defineProps(['onChangePage'])
 </script>
-<style>
-#app {
-  font-family: 'Arial';
-  padding: 20px;
-}
-</style>

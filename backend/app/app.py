@@ -4,7 +4,7 @@ import logging
 from datetime import datetime
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
-from .utils import validate_name
+from .utils import validate_name, convert_court_code, convert_court_name
 import uuid
 
 from dotenv import load_dotenv
@@ -138,6 +138,7 @@ def get_players():
 
 @app.route("/api/referees", methods=["POST"])
 def add_referee():
+    logging.debug("/api/referees POST request received")
     try:
         if not request.is_json:
             return (
@@ -145,23 +146,47 @@ def add_referee():
                 400,
             )
 
-        name = request.json.get("name")
+        data = request.json
+        name = data.get("name")
+        assignments = data.get("assignments", [])
+
         is_valid, validated_name = validate_name(name)
         if not is_valid:
             return jsonify({"error": validated_name}), 400
 
         with file_lock:
-            data = referee_load_data()
-            if any(r["name"] == validated_name for r in data):
+            existing_data = referee_load_data()
+            if any(r["name"] == validated_name for r in existing_data):
                 return jsonify({"error": "この審判員はすでに登録されています"}), 409
 
             new_entry = {
-                "id": len(data) + 1,
+                "id": str(uuid.uuid4()),
                 "name": validated_name,
-                "created_at": datetime.now().isoformat(),
+                "create_datetime": datetime.now().isoformat(),
+                "rounds": []
             }
-            data.append(new_entry)
-            referee_save_data(data)
+
+            # フロントエンドから受け取った担当情報を設定
+            for gc in assignments:
+                round_data = {
+                    "round": gc.get("round", ""),
+                    "court_code": convert_court_code(gc.get("court_code", "")),
+                    "post_code": gc.get("post_code", "")
+                }
+                new_entry["rounds"].append(round_data)
+
+            # 不足しているラウンド情報を補完（6ラウンドまで）
+            current_rounds = len(new_entry["rounds"])
+            if current_rounds < 6:
+                for i in range(current_rounds + 1, 7):
+                    new_entry["rounds"].append({
+                        "round": i,
+                        "court_code": "",
+                        "post_code": ""
+                    })
+
+            existing_data.append(new_entry)
+            referee_save_data(new_entry)
 
         return (
             jsonify({"message": "名前が正常に追加されました", "data": new_entry}),
@@ -175,12 +200,23 @@ def add_referee():
 @app.route("/api/referees", methods=["GET"])
 def get_referees():
     try:
-        with file_lock:
-            data = referee_load_data()
+        data = referee_load_data()
+        # データの各レコードのコートコードを名前に変換
+        for referee in data:
+            for round_data in referee.get("rounds", []):
+                court_code = round_data.get("court_code")
+                if court_code:
+                    # コートコードを名前に変換
+                    round_data["court_code"] = convert_court_name(court_code)
+                else:
+                    round_data["court_code"] = ""
+
         return (
-            jsonify(
-                {"message": "名前一覧を取得しました", "data": data, "count": len(data)}
-            ),
+            jsonify({
+                "message": "名前一覧を取得しました",
+                "data": data,
+                "count": len(data)
+            }),
             200,
         )
     except Exception as e:

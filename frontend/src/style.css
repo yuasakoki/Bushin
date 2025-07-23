@@ -223,7 +223,7 @@ body::before {
 /* Result Table */
 table {
   width: 100%;
-  border-collapse: collapse;
+  /* border-collapse: collapse; */
   animation: fadeInUp 1.4s ease-out;
 }
 thead {
@@ -231,13 +231,13 @@ thead {
   border-bottom: 2px solid #b71c1c;
 }
 th, td {
-  padding: 1rem;
+  /* padding: 1rem; */
   font-family: var(--font-mincho);
   color: var(--accent-white);
 }
 tbody tr:hover {
   background-color: rgba(255, 215, 0, 0.08);
-  transition: var(--transition);
+  /* transition: var(--transition); */
 }
 
 /* Animations */
@@ -277,13 +277,13 @@ tbody tr:hover {
 }
 
 /* テーブルヘッダー下の区切り線 */
-thead {
+/* thead {
   position: relative;
   background-color: rgba(183, 28, 28, 0.15);
   border-bottom: 3px solid var(--accent-red);
-}
+} */
 
-thead::after {
+/* thead::after {
   content: '';
   position: absolute;
   bottom: 0;
@@ -294,4 +294,4 @@ thead::after {
   background: linear-gradient(90deg, var(--accent-red), var(--accent-gold), var(--accent-white));
   animation: dividerWave 5s linear infinite;
   pointer-events: none;
-}
+} */
