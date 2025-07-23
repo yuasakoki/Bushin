@@ -41,21 +41,18 @@ app = Flask(
 CORS(app)
 file_lock = threading.Lock()
 
-
 # 共通エラーレスポンス
 def handle_exception(e):
     logging.exception(e)
     return jsonify({"error": ERROR_MESSAGE + ": " + str(e)}), 500
 
-
 @app.route("/")
 def index():
     return render_template("index.html")
 
-
-@app.route("/api/names", methods=["POST"])
+@app.route("/api/players", methods=["POST"])
 def add_player():
-    logging.debug("/api/names POST request received")
+    logging.debug("/api/players POST request received")
     try:
         if not request.is_json:
             return (
@@ -64,12 +61,12 @@ def add_player():
             )
 
         data = request.json
-        name, grade, age, gender, affiliation = (
+        name, grade, age, affiliation, court_code = (
             data.get("name"),
             data.get("grade"),
             data.get("age"),
-            data.get("gender"),
             data.get("affiliation"),
+            data.get("court_code")
         )
 
         is_valid, validated_name = validate_name(name)
@@ -87,8 +84,8 @@ def add_player():
                     player.get("name") == name
                     and player.get("grade") == grade
                     and player.get("age") == age
-                    and player.get("gender") == gender
                     and player.get("affiliation") == affiliation
+                    and player.get("rounds", [{}])[0].get("court_code") == convert_court_code(court_code)
                 ):
                     return jsonify({"error": "この選手はすでに登録されています"}), 409
 
@@ -97,12 +94,16 @@ def add_player():
             "name": name,
             "grade": grade,
             "age": age,
-            "gender": gender,
+            "gender": "gender",
             "affiliation": affiliation,
             "create_datetime": datetime.now().isoformat(),
-            "rounds": [{"round": i, "court_code": "", "score": 0} for i in range(1, 4)],
+            "rounds": [
+                {"round": 1, "court_code": convert_court_code(court_code), "score": 0},
+                {"round": 2, "court_code": "", "score": 0},
+                {"round": 3, "court_code": "", "score": 0},
+            ],
         }
-
+        logger.info(f"new_entry: {new_entry}")
         player_save_data(new_entry)
         all_players = player_load_data()
         return (
@@ -112,24 +113,29 @@ def add_player():
             }),
     201,
 )
-
-
     except Exception as e:
         return handle_exception(e)
 
-
-@app.route("/api/names", methods=["GET"])
+@app.route("/api/players", methods=["GET"])
 def get_players():
     try:
-        players = player_load_data()
+        data = player_load_data()
+        # データの各レコードのコートコードを名前に変換
+        for player in data:
+            for round_data in player.get("rounds", []):
+                court_code = round_data.get("court_code")
+                if court_code:
+                    # コートコードを名前に変換
+                    round_data["court_code"] = convert_court_name(court_code)
+                else:
+                    round_data["court_code"] = ""
+
         return (
-            jsonify(
-                {
-                    "message": "名前一覧を取得しました",
-                    "data": players,
-                    "count": len(players),
-                }
-            ),
+            jsonify({
+                "message": "名前一覧を取得しました",
+                "data": data,
+                "count": len(data)
+            }),
             200,
         )
     except Exception as e:
@@ -196,7 +202,6 @@ def add_referee():
     except Exception as e:
         return handle_exception(e)
 
-
 @app.route("/api/referees", methods=["GET"])
 def get_referees():
     try:
@@ -222,22 +227,18 @@ def get_referees():
     except Exception as e:
         return handle_exception(e)
 
-
 # 共通エラーハンドラ
 @app.errorhandler(404)
 def not_found(_):
     return jsonify({"error": "エンドポイントが見つかりません"}), 404
 
-
 @app.errorhandler(405)
 def method_not_allowed(_):
     return jsonify({"error": "許可されていないメソッドです"}), 405
 
-
 @app.errorhandler(500)
 def internal_server_error(e):
     return handle_exception(e)
-
 
 if __name__ == "__main__":
     app.run(debug=True, host="127.0.0.1", port=5000)

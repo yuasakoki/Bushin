@@ -56,8 +56,8 @@ https://bushin-app.onrender.com
 
 | メソッド | エンドポイント      | 内容                       |
 |----------|---------------------|----------------------------|
-| GET      | `/api/names`        | 選手一覧を取得             |
-| POST     | `/api/names`        | 選手登録                   |
+| GET      | `/api/players`        | 選手一覧を取得             |
+| POST     | `/api/players`        | 選手登録                   |
 | GET      | `/api/Referee`      | 審判員一覧を取得           |
 | POST     | `/api/Referee`      | 審判員登録                 |
 | ...      | 今後、割り当て/スコアAPIも追加予定 |
